@@ -20,6 +20,9 @@ export class User {
   @Column({ type: 'character varying', length: 64 })
   email: string;
 
+  @Column({ type: 'text', nullable: true })
+  avatar: string;
+
   @OneToMany((_type) => Quote, (quote) => quote.user, { eager: true })
   quotes: Quote[];
 }
