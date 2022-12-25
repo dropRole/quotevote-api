@@ -12,7 +12,7 @@ export class Quote {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   written: Date;
 
-  @Column({ type: 'timestamp', default: 'NULL' })
+  @Column({ type: 'timestamp', nullable: true })
   updated: Date;
 
   @Column({ type: 'smallint' })
