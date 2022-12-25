@@ -1,5 +1,5 @@
 import { Exclude } from 'class-transformer';
-import { Quote } from 'src/quotes/quote.entity';
+import { Quote } from '../quotes/quote.entity';
 import { Entity, PrimaryColumn, Column, OneToMany } from 'typeorm';
 
 @Entity('users')

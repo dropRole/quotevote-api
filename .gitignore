@@ -35,5 +35,7 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 # .env files
-.env.stage.dev
-.env.stage.prod
+.env.stage.*
+
+# migrations dir
+/src/migrations
