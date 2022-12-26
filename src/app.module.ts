@@ -6,6 +6,8 @@ import { QuotesModule } from './quotes/quotes.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { configValidationSchema } from './config.schema';
+import { APP_GUARD } from '@nestjs/core';
+import { JWTGuard } from './auth/jwt.guard';
 
 @Module({
   imports: [
@@ -31,6 +33,6 @@ import { configValidationSchema } from './config.schema';
     QuotesModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, { provide: APP_GUARD, useClass: JWTGuard }],
 })
 export class AppModule {}

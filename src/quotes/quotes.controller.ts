@@ -1,15 +1,18 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { Delete, Get, Param, Patch, Query } from '@nestjs/common/decorators';
+import { Public } from 'src/auth/public.decorator';
 import { CreateUpdateQuoteDTO } from './dto/create-update-quote.dto';
 import { Quote } from './quote.entity';
 
 @Controller('quotes')
 export class QuotesController {
+  @Public()
   @Get()
   async getQuotes(@Query('search') search: string): Promise<Quote[]> {
     return [new Quote()];
   }
 
+  @Public()
   @Get('/:id')
   async getQuote(@Param('id') id: string): Promise<Quote> {
     return new Quote();
