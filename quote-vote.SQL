@@ -1,6 +1,6 @@
 ﻿/*
 Created: 22/12/2022
-Modified: 22/12/2022
+Modified: 26/12/2022
 Model: PostgreSQL 10
 Database: PostgreSQL 10
 */
@@ -15,7 +15,8 @@ CREATE TABLE "users"(
  "pass" Character varying(64) NOT NULL,
  "name" Character varying(13) NOT NULL,
  "surname" Character varying(20) NOT NULL,
- "email" Character varying(64) NOT NULL
+ "email" Character varying(64) NOT NULL,
+ "avatar" Text
 )
 WITH (
  autovacuum_enabled=true)
@@ -31,6 +32,8 @@ ALTER TABLE "users" ADD CONSTRAINT "PK_users" PRIMARY KEY ("username")
 CREATE TABLE "quotes"(
  "id" UUID NOT NULL,
  "quote" Character varying(400) NOT NULL,
+ "written" Timestamp NOT NULL,
+ "updated" Timestamp,
  "upvotes" Smallint DEFAULT 0 NOT NULL,
  "downvotes" Smallint DEFAULT 0 NOT NULL,
  "username" Character varying(20) NOT NULL
