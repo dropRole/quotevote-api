@@ -1,26 +1,40 @@
 import { Controller } from '@nestjs/common';
-import { Body, Get, Post } from '@nestjs/common/decorators';
+import { Body, Get, Post, Patch } from '@nestjs/common/decorators';
+import { AuthService } from './auth.service';
 import { AuthCredentialsDTO } from './dto/auth-credentials.dto';
 import { SignUpDTO } from './dto/sign-up.dto';
+import { GetUser } from './get-user.decorator';
 import { Public } from './public.decorator';
 import { User } from './user.entity';
 
 @Controller('auth')
 export class AuthController {
+  constructor(private authService: AuthService) {}
+
   @Public()
   @Post('/signup')
-  async signup(@Body() signUpDTO: SignUpDTO): Promise<void> {}
+  signup(@Body() signUpDTO: SignUpDTO): Promise<void> {
+    return this.authService.signup(signUpDTO);
+  }
 
   @Public()
   @Get('/signin')
-  async signin(
-    @Body() authCredentials: AuthCredentialsDTO,
+  signin(
+    @Body() authCredentialsDTO: AuthCredentialsDTO,
   ): Promise<{ accessToken: string }> {
-    return { accessToken: '' };
+    return this.authService.signin(authCredentialsDTO);
   }
 
   @Get('/me')
-  async getInfo(@Body('username') username: string): Promise<User> {
-    return new User();
+  getInfo(@GetUser() user: User): User {
+    return user;
+  }
+
+  @Patch('/me/update-pass')
+  updatePass(
+    @GetUser() user: User,
+    @Body('newpass') newPass: string,
+  ): Promise<void> {
+    return this.authService.updatePass(user, newPass);
   }
 }
