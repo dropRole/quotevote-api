@@ -12,6 +12,7 @@ import * as bcrypt from 'bcrypt';
 import { SQLErrorCode } from 'src/sql-error-code.enum';
 import { JWTPayload } from './jwt-payload.interface';
 import { JwtService } from '@nestjs/jwt';
+import * as fs from 'fs';
 
 @Injectable()
 export class AuthService {
@@ -72,10 +73,35 @@ export class AuthService {
       where: { username: user.username },
     });
 
-    const salt = await bcrypt.genSalt()
+    const salt = await bcrypt.genSalt();
 
     updateUser.pass = await bcrypt.hash(newPass, salt);
 
     this.usersRepository.save(updateUser);
+  }
+
+  async uploadAvatar(user: User, filename: string): Promise<void> {
+    // if user already has an avatar
+    if (user.avatar) {
+      fs.unlink(`uploads/${filename}`, (err) => {
+        if (err) throw err;
+      });
+
+      throw new ConflictException('Avatar is already uploaded.');
+    }
+
+    user.avatar = `uploads/${filename}`;
+
+    this.usersRepository.save(user);
+  }
+
+  async unlinkAvatar(user: User): Promise<void> {
+    fs.unlink(user.avatar, (err) => {
+      if (err) throw err;
+    });
+
+    user.avatar = null;
+
+    await this.usersRepository.save(user);
   }
 }
