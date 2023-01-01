@@ -1,5 +1,13 @@
 import { User } from '../auth/user.entity';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+} from 'typeorm';
+import { Vote } from './vote.entity';
 
 @Entity('quotes')
 export class Quote {
@@ -15,16 +23,14 @@ export class Quote {
   @Column({ type: 'timestamp', nullable: true })
   updated: Date;
 
-  @Column({ type: 'smallint' })
-  upvotes: number;
-
-  @Column({ type: 'smallint' })
-  downvotes: number;
-
   @ManyToOne((_type) => User, (user) => user.quotes, {
-    eager: false,
+    eager: true,
     onUpdate: 'CASCADE',
     onDelete: 'RESTRICT',
   })
+  @JoinColumn({ name: 'username' })
   user: User;
+
+  @OneToMany((_type) => Vote, (vote) => vote.quote, { eager: true })
+  votes: Vote[];
 }
