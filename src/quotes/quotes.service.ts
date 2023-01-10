@@ -54,7 +54,7 @@ export class QuotesService {
 
   async getQuotes(
     getFilterDTO: GetFilterDTO,
-    username?: string,
+    user?: User,
   ): Promise<Record<any, any>[]> {
     const { search, author, limit } = getFilterDTO;
 
@@ -101,14 +101,14 @@ export class QuotesService {
     }
 
     // if logged in user
-    if (username) return await this.checkForVotedQuotes(quotes, username);
+    if (user) return await this.checkForVotedQuotes(quotes, user.username);
 
     return quotes;
   }
 
   async getQuote(
     id?: string | undefined,
-    username?: string | undefined,
+    user?: User,
   ): Promise<Record<any, any>> {
     const query = this.quotesRepository.createQueryBuilder('quotes');
     query.innerJoin('quotes.user', 'users');
@@ -133,7 +133,8 @@ export class QuotesService {
     }
 
     // if logged in user
-    if (username) return (await this.checkForVotedQuotes([quote], username))[0];
+    if (user)
+      return (await this.checkForVotedQuotes([quote], user.username))[0];
 
     return quote;
   }
