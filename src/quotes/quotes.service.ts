@@ -22,8 +22,41 @@ export class QuotesService {
     private votesRepository: Repository<Vote>,
   ) {}
 
-  async getQuotes(getFilterDTO: GetFilterDTO): Promise<Quote[]> {
-    const { search } = getFilterDTO;
+  private async checkForVotedQuotes(
+    quotes: Record<any, any>[],
+    username: string,
+  ): Promise<Record<any, any>[]> {
+    for (let i = 0; i <= quotes.length - 1; i++) {
+      const query = this.votesRepository.createQueryBuilder('votes');
+      query.innerJoin('votes.quote', 'quotes');
+      query.where('votes."quoteId" = :id', {
+        id: quotes[i].quotes_id,
+      });
+      query.andWhere('votes.username = :username', {
+        username,
+      });
+
+      let quoteVote: Vote;
+
+      try {
+        quoteVote = await query.getOne();
+      } catch (error) {}
+
+      // if upvoted
+      if (quoteVote && quoteVote.vote) quotes[i].votes_vote = true;
+
+      // if downvoted
+      if (quoteVote && !quoteVote.vote) quotes[i].votes_vote = false;
+    }
+
+    return quotes;
+  }
+
+  async getQuotes(
+    getFilterDTO: GetFilterDTO,
+    username?: string,
+  ): Promise<Record<any, any>[]> {
+    const { search, author, limit } = getFilterDTO;
 
     const query = this.quotesRepository.createQueryBuilder('quotes');
     query.innerJoin('quotes.user', 'users');
@@ -31,17 +64,21 @@ export class QuotesService {
     query.select('quotes');
     query.addSelect(
       '(COUNT(CASE WHEN votes.vote = true THEN 1 END) - COUNT(CASE WHEN votes.vote = false THEN 1 END))',
-      'voted',
+      'votes_total',
     );
+
+    // if quote author provided
+    if (author) query.where('quotes.username = :author', { author });
+
     query.groupBy('quotes.id');
 
     switch (search) {
       case 'most':
-        query.orderBy('voted', 'DESC');
+        query.orderBy('votes_total', 'DESC');
         break;
 
       case 'least':
-        query.orderBy('voted', 'ASC');
+        query.orderBy('votes_total', 'ASC');
         break;
 
       case 'recent':
@@ -52,30 +89,53 @@ export class QuotesService {
         query.orderBy('written', 'DESC');
     }
 
+    // if quote limit was given
+    limit ? query.limit(limit) : query.limit(10);
+
+    let quotes: Record<any, any>[] = [];
+
     try {
-      return await query.execute();
+      quotes = await query.execute();
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
+
+    // if logged in user
+    if (username) return await this.checkForVotedQuotes(quotes, username);
+
+    return quotes;
   }
 
-  async getQuote(id: string): Promise<Record<any, any>> {
+  async getQuote(
+    id?: string | undefined,
+    username?: string | undefined,
+  ): Promise<Record<any, any>> {
     const query = this.quotesRepository.createQueryBuilder('quotes');
     query.innerJoin('quotes.user', 'users');
     query.leftJoinAndSelect('quotes.votes', 'votes');
     query.select('quotes');
     query.addSelect(
       '(COUNT(CASE WHEN votes.vote = true THEN 1 END) - COUNT(CASE WHEN votes.vote = false THEN 1 END))',
-      'voted',
+      'votes_total',
     );
-    query.where('quotes.id = :id', { id });
+
+    // if selecting a particular quote
+    id ? query.where('quotes.id = :id', { id }) : query.orderBy('random()');
+
     query.groupBy('quotes.id');
 
+    let quote: Record<any, any>;
+
     try {
-      return (await query.execute())[0];
+      quote = (await query.execute())[0];
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
+
+    // if logged in user
+    if (username) return (await this.checkForVotedQuotes([quote], username))[0];
+
+    return quote;
   }
 
   async createQuote(
