@@ -13,14 +13,28 @@ export class QuotesController {
 
   @Public()
   @Get()
-  getQuotes(@Query() getFilterDTO: GetFilterDTO): Promise<Record<any, any>[]> {
-    return this.quotesService.getQuotes(getFilterDTO);
+  getQuotes(
+    @Query() getFilterDTO: GetFilterDTO,
+    @Body('username') username?: string,
+  ): Promise<Record<any, any>[]> {
+    return this.quotesService.getQuotes(getFilterDTO, username);
   }
 
   @Public()
   @Get('/:id')
-  getQuote(@Param('id') id: string): Promise<Record<any, any>> {
-    return this.quotesService.getQuote(id);
+  getQuote(
+    @Param('id') id: string,
+    @Body('username') username?: string,
+  ): Promise<Record<any, any>> {
+    return this.quotesService.getQuote(id, username);
+  }
+
+  @Public()
+  @Get('/rand/one')
+  getRandomQuote(
+    @Body('username') username?: string,
+  ): Promise<Record<any, any>> {
+    return this.quotesService.getQuote(undefined, username);
   }
 
   @Post('/me/myquote')
