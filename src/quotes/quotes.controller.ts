@@ -15,26 +15,24 @@ export class QuotesController {
   @Get()
   getQuotes(
     @Query() getFilterDTO: GetFilterDTO,
-    @Body('username') username?: string,
+    @GetUser() user?: User,
   ): Promise<Record<any, any>[]> {
-    return this.quotesService.getQuotes(getFilterDTO, username);
+    return this.quotesService.getQuotes(getFilterDTO, user);
   }
 
   @Public()
   @Get('/:id')
   getQuote(
     @Param('id') id: string,
-    @Body('username') username?: string,
+    @GetUser() user?: User,
   ): Promise<Record<any, any>> {
-    return this.quotesService.getQuote(id, username);
+    return this.quotesService.getQuote(id, user);
   }
 
   @Public()
   @Get('/rand/one')
-  getRandomQuote(
-    @Body('username') username?: string,
-  ): Promise<Record<any, any>> {
-    return this.quotesService.getQuote(undefined, username);
+  getRandomQuote(@GetUser() user?: User): Promise<Record<any, any>> {
+    return this.quotesService.getQuote(undefined, user);
   }
 
   @Post('/me/myquote')
