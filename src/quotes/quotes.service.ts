@@ -62,6 +62,8 @@ export class QuotesService {
     query.innerJoin('quotes.user', 'users');
     query.leftJoinAndSelect('quotes.votes', 'votes');
     query.select('quotes');
+    query.addSelect("users.name || ' ' || users.surname", 'users_fullname');
+    query.addSelect('users.avatar');
     query.addSelect(
       '(COUNT(CASE WHEN votes.vote = true THEN 1 END) - COUNT(CASE WHEN votes.vote = false THEN 1 END))',
       'votes_total',
@@ -70,7 +72,7 @@ export class QuotesService {
     // if quote author provided
     if (author) query.where('quotes.username = :author', { author });
 
-    query.groupBy('quotes.id');
+    query.groupBy('quotes.id, users.avatar, users.name, users.surname');
 
     switch (search) {
       case 'most':
@@ -114,6 +116,8 @@ export class QuotesService {
     query.innerJoin('quotes.user', 'users');
     query.leftJoinAndSelect('quotes.votes', 'votes');
     query.select('quotes');
+    query.addSelect("users.name || ' ' || users.surname", 'users_fullname');
+    query.addSelect('users.avatar');
     query.addSelect(
       '(COUNT(CASE WHEN votes.vote = true THEN 1 END) - COUNT(CASE WHEN votes.vote = false THEN 1 END))',
       'votes_total',
@@ -122,7 +126,7 @@ export class QuotesService {
     // if selecting a particular quote
     id ? query.where('quotes.id = :id', { id }) : query.orderBy('random()');
 
-    query.groupBy('quotes.id');
+    query.groupBy('quotes.id, users.avatar, users.name, users.surname');
 
     let quote: Record<any, any>;
 
