@@ -7,7 +7,14 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { Body, Get, Post, Patch, Header, Query } from '@nestjs/common/decorators';
+import {
+  Body,
+  Get,
+  Post,
+  Patch,
+  Header,
+  Query,
+} from '@nestjs/common/decorators';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { createReadStream } from 'fs';
 import { diskStorage } from 'multer';
@@ -42,6 +49,7 @@ export class AuthController {
     return user;
   }
 
+  @Public()
   @Get('/me/avatar')
   @Header('Content-Type', 'image/*')
   getAvatar(@Query('path') path: string): StreamableFile {
