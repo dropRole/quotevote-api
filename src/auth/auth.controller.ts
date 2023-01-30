@@ -37,8 +37,8 @@ export class AuthController {
   }
 
   @Public()
-  @Get('/signin')
-  signin(
+  @Post('/login')
+  login(
     @Body() authCredentialsDTO: AuthCredentialsDTO,
   ): Promise<{ accessToken: string }> {
     return this.authService.signin(authCredentialsDTO);
