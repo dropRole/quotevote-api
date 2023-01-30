@@ -41,7 +41,7 @@ export class AuthController {
   login(
     @Body() authCredentialsDTO: AuthCredentialsDTO,
   ): Promise<{ accessToken: string }> {
-    return this.authService.signin(authCredentialsDTO);
+    return this.authService.login(authCredentialsDTO);
   }
 
   @Get('/me')
