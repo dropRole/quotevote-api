@@ -9,7 +9,7 @@ export class AuthController {
   @Post('/signup')
   async signup(@Body() signUpDTO: SignUpDTO): Promise<void> {}
 
-  @Get('/signin')
+  @Post('/login')
   async signin(
     @Body() authCredentials: AuthCredentialsDTO,
   ): Promise<{ accessToken: string }> {
