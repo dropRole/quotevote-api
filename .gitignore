@@ -39,3 +39,6 @@ lerna-debug.log*
 
 # migrations dir
 migrations
+
+# static asset uploads
+uploads

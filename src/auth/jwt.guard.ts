@@ -19,8 +19,12 @@ export class JWTGuard extends AuthGuard('jwt') {
       ctx.getHandler(),
     ]);
 
-    // if route is public
-    if (isPublic) return true;
+    const {
+      headers: { authorization },
+    } = ctx.switchToHttp().getRequest();
+
+    // if route is public and no Auth provided
+    if (isPublic && !authorization) return true;
 
     return super.canActivate(ctx);
   }
