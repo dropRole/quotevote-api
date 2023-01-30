@@ -38,4 +38,7 @@ lerna-debug.log*
 .env.stage.*
 
 # migrations dir
-/src/migrations
+migrations
+
+# static asset uploads
+uploads
