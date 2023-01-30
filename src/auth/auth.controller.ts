@@ -12,8 +12,8 @@ export class AuthController {
   async signup(@Body() signUpDTO: SignUpDTO): Promise<void> {}
 
   @Public()
-  @Get('/signin')
-  async signin(
+  @Post('/login')
+  async login(
     @Body() authCredentials: AuthCredentialsDTO,
   ): Promise<{ accessToken: string }> {
     return { accessToken: '' };
