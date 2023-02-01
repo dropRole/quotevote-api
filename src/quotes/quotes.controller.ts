@@ -15,6 +15,11 @@ export class QuotesController {
     return new Quote();
   }
 
+  @Get('/karma/:username')
+  getQuoteKarma(
+    @Param('username') username: string,
+  ): Promise<{ quotes: Quote[]; karma: number }> {}
+
   @Post('/me/myquote')
   async createQuote(
     @Body() createUpdateQuoteDTO: CreateUpdateQuoteDTO,
