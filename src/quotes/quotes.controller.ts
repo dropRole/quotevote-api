@@ -35,10 +35,13 @@ export class QuotesController {
     return this.quotesService.getQuote(undefined, user);
   }
 
+  @Public()
   @Get('/karma/:username')
   getQuoteKarma(
     @Param('username') username: string,
-  ): Promise<{ quotes: Quote[]; karma: number }> {}
+  ): Promise<{ quotes: number; karma: number }> {
+    return this.quotesService.getQuoteKarma(username);
+  }
 
   @Post('/me/myquote')
   createQuote(

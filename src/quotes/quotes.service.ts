@@ -143,6 +143,39 @@ export class QuotesService {
     return quote;
   }
 
+  async getQuoteKarma(
+    username: string,
+  ): Promise<{ quotes: number; karma: number }> {
+    const totalQuery = this.quotesRepository.createQueryBuilder('quotes');
+    totalQuery.select('quotes.username');
+    totalQuery.addSelect('COUNT(quotes.id)', 'total');
+    totalQuery.where('quotes.username = :username ', { username });
+    totalQuery.groupBy('quotes.username');
+
+    const karmaQuery = this.quotesRepository.createQueryBuilder('quotes');
+    karmaQuery.innerJoin('quotes.user', 'users')
+    karmaQuery.innerJoin('quotes.votes', 'votes')
+    karmaQuery.select('users.username');
+    karmaQuery.addSelect(
+      '(COUNT(CASE WHEN votes.vote = true THEN 1 END) - COUNT(CASE WHEN votes.vote = false THEN 1 END))',
+      'karma',
+    );
+    karmaQuery.where('quotes.username = :username ', { username });
+    karmaQuery.groupBy('users.username');
+
+    const result: { quotes: number; karma: number } = { quotes: 0, karma: 0 };
+    try {
+      const { total } = (await totalQuery.execute())[0];
+      const { karma } = (await karmaQuery.execute())[0];
+      result.quotes = total;
+      result.karma = karma;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+
+    return result;
+  }
+
   async createQuote(
     user: User,
     createUpdateQuoteDTO: CreateUpdateQuoteDTO,
