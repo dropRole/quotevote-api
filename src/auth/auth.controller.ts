@@ -3,12 +3,22 @@ import {
   FileTypeValidator,
   MaxFileSizeValidator,
   ParseFilePipe,
+  StreamableFile,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { Body, Get, Post, Patch } from '@nestjs/common/decorators';
+import {
+  Body,
+  Get,
+  Post,
+  Patch,
+  Header,
+  Query,
+} from '@nestjs/common/decorators';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { createReadStream } from 'fs';
 import { diskStorage } from 'multer';
+import { join } from 'path';
 import { AuthService } from './auth.service';
 import { AuthCredentialsDTO } from './dto/auth-credentials.dto';
 import { SignUpDTO } from './dto/sign-up.dto';
@@ -27,16 +37,25 @@ export class AuthController {
   }
 
   @Public()
-  @Get('/signin')
-  signin(
+  @Post('/login')
+  login(
     @Body() authCredentialsDTO: AuthCredentialsDTO,
   ): Promise<{ accessToken: string }> {
-    return this.authService.signin(authCredentialsDTO);
+    return this.authService.login(authCredentialsDTO);
   }
 
   @Get('/me')
   getInfo(@GetUser() user: User): User {
     return user;
+  }
+
+  @Public()
+  @Get('/me/avatar')
+  @Header('Content-Type', 'image/*')
+  getAvatar(@Query('path') path: string): StreamableFile {
+    const file = createReadStream(join(process.cwd(), path));
+
+    return new StreamableFile(file);
   }
 
   @Patch('/me/update-pass')
@@ -78,6 +97,6 @@ export class AuthController {
 
   @Patch('/me/avatar-unlink')
   unlinkAvatar(@GetUser() user: User): Promise<void> {
-    return this.authService.unlinkAvatar(user)
+    return this.authService.unlinkAvatar(user);
   }
 }
