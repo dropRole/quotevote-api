@@ -87,6 +87,12 @@ export class QuotesService {
         query.orderBy('written', 'DESC');
         break;
 
+      case 'voted':
+        query.where('votes.username = :username', {
+          username: user.username,
+        });
+        break;
+
       default:
         query.orderBy('written', 'DESC');
     }
@@ -153,8 +159,8 @@ export class QuotesService {
     totalQuery.groupBy('quotes.username');
 
     const karmaQuery = this.quotesRepository.createQueryBuilder('quotes');
-    karmaQuery.innerJoin('quotes.user', 'users')
-    karmaQuery.innerJoin('quotes.votes', 'votes')
+    karmaQuery.innerJoin('quotes.user', 'users');
+    karmaQuery.innerJoin('quotes.votes', 'votes');
     karmaQuery.select('users.username');
     karmaQuery.addSelect(
       '(COUNT(CASE WHEN votes.vote = true THEN 1 END) - COUNT(CASE WHEN votes.vote = false THEN 1 END))',
