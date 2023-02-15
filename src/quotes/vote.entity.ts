@@ -22,7 +22,11 @@ export class Vote {
   @Column({ type: 'timestamp', nullable: true })
   reVoted: Date;
 
-  @ManyToOne((_type) => User, (user) => user.votes, { eager: false })
+  @ManyToOne((_type) => User, (user) => user.votes, {
+    eager: false,
+    onUpdate: 'CASCADE',
+    onDelete: 'RESTRICT',
+  })
   @JoinColumn({ name: 'username' })
   user: User;
 
