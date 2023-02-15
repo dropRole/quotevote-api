@@ -23,6 +23,7 @@ import { join } from 'path';
 import { AuthService } from './auth.service';
 import { AuthCredentialsDTO } from './dto/auth-credentials.dto';
 import { BasicsUpdateDTO } from './dto/basics-update-dto';
+import { PassUpdateDTO } from './dto/pass-update.dto';
 import { SignUpDTO } from './dto/sign-up.dto';
 import { GetUser } from './get-user.decorator';
 import { Public } from './public.decorator';
@@ -63,17 +64,17 @@ export class AuthController {
   @Patch('/me/basics')
   updateBasics(
     @GetUser() user: User,
-    @Body() basicsUpdateDTO: BasicsUpdateDTO
-  ): Promise<void> {
+    @Body() basicsUpdateDTO: BasicsUpdateDTO,
+  ): Promise<{ accessToken: string }> {
     return this.authService.updateBasics(user, basicsUpdateDTO);
   }
 
   @Patch('/me/pass')
   updatePass(
     @GetUser() user: User,
-    @Body('newpass') newPass: string,
+    @Body() passUpdateDTO: PassUpdateDTO,
   ): Promise<void> {
-    return this.authService.updatePass(user, newPass);
+    return this.authService.updatePass(user, passUpdateDTO);
   }
 
   @Patch('/me/avatar-upload')
@@ -101,7 +102,7 @@ export class AuthController {
     )
     avatar: Express.Multer.File,
     @GetUser() user: User,
-  ): Promise<void> {
+  ): Promise<{ path: string }> {
     return this.authService.uploadAvatar(user, avatar.filename);
   }
 
