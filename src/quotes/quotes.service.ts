@@ -171,8 +171,8 @@ export class QuotesService {
 
     const result: { quotes: number; karma: number } = { quotes: 0, karma: 0 };
     try {
-      const { total } = (await totalQuery.execute())[0];
-      const { karma } = (await karmaQuery.execute())[0];
+      const { total } = (await totalQuery.execute())[0] ?? { total: 0 };
+      const { karma } = (await karmaQuery.execute())[0] ?? { karma: 0 };
       result.quotes = total;
       result.karma = karma;
     } catch (error) {

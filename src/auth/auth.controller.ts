@@ -83,10 +83,7 @@ export class AuthController {
       storage: diskStorage({
         destination: './uploads',
         filename(_req, file, callback) {
-          callback(
-            null,
-            `${new Date().getMilliseconds()}_${file.originalname}`,
-          );
+          callback(null, `${new Date().getTime()}_${file.originalname}`);
         },
       }),
     }),
