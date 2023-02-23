@@ -9,7 +9,7 @@ import { AuthCredentialsDTO } from './dto/auth-credentials.dto';
 import { SignUpDTO } from './dto/sign-up.dto';
 import { User } from './user.entity';
 import * as bcrypt from 'bcrypt';
-import { SQLErrorCode } from 'src/sql-error-code.enum';
+import { SQLErrorCode } from '../sql-error-code.enum';
 import { JWTPayload } from './jwt-payload.interface';
 import { JwtService } from '@nestjs/jwt';
 import * as fs from 'fs';
