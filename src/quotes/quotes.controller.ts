@@ -1,8 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { Delete, Get, Param, Patch, Query } from '@nestjs/common/decorators';
-import { GetUser } from 'src/auth/get-user.decorator';
-import { Public } from 'src/auth/public.decorator';
-import { User } from 'src/auth/user.entity';
+import { GetUser } from '../auth/get-user.decorator';
+import { Public } from '../auth/public.decorator';
+import { User } from '../auth/user.entity';
 import { CreateUpdateQuoteDTO } from './dto/create-update-quote.dto';
 import { GetFilterDTO } from './dto/get-filter.dto';
 import { QuotesService } from './quotes.service';
