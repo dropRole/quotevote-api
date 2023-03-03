@@ -89,7 +89,7 @@ export class QuotesService {
 
       case 'voted':
         query.where('votes.username = :username', {
-          username: user.username,
+          username: author,
         });
         break;
 
