@@ -36,3 +36,6 @@ lerna-debug.log*
 
 # config files
 /src/config/.env.stage.*
+
+# migration files
+/src/migrations
