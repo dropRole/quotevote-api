@@ -3,10 +3,11 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { QuotesModule } from './quotes/quotes.module';
-import { VotesModule } from './votes/votes.module';
+import { ConfigModule } from '@nestjs/config';
+import { EnvConfig } from './config/env.config';
 
 @Module({
-  imports: [AuthModule, QuotesModule, VotesModule],
+  imports: [AuthModule, QuotesModule, ConfigModule.forRoot(EnvConfig)],
   controllers: [AppController],
   providers: [AppService],
 })
