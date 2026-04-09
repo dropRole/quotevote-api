@@ -3,16 +3,15 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { QuotesModule } from './quotes/quotes.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { configValidationSchema } from './config.schema';
+import { EnvConfig } from './config/env.config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      envFilePath: [`.env.stage.${process.env.STAGE}`],
-      validationSchema: configValidationSchema,
-    }),
+    AuthModule,
+    QuotesModule,
+    ConfigModule.forRoot(EnvConfig),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -27,8 +26,6 @@ import { configValidationSchema } from './config.schema';
         synchronize: process.env.STAGE === 'dev' ? true : false,
       }),
     }),
-    AuthModule,
-    QuotesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
