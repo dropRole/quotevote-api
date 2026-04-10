@@ -2,7 +2,7 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { Delete, Get, Param, Patch, Query } from '@nestjs/common/decorators';
 import { Public } from 'src/auth/public.decorator';
 import { CreateUpdateQuoteDTO } from './dto/create-update-quote.dto';
-import { Quote } from './quote.entity';
+import { Quote } from './entities/quote.entity';
 
 @Controller('quotes')
 export class QuotesController {
