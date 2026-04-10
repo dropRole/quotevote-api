@@ -9,19 +9,21 @@ export class QuotesController {
   @Public()
   @Get()
   async getQuotes(@Query('search') search: string): Promise<Quote[]> {
-    return [new Quote()];
+    return;
   }
 
   @Public()
   @Get('/:id')
   async getQuote(@Param('id') id: string): Promise<Quote> {
-    return new Quote();
+    return;
   }
 
   @Get('/karma/:username')
   getQuoteKarma(
     @Param('username') username: string,
-  ): Promise<{ quotes: Quote[]; karma: number }> {}
+  ): Promise<{ quotes: Quote[]; karma: number }> {
+    return;
+  }
 
   @Post('/me/myquote')
   async createQuote(
