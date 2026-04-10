@@ -6,10 +6,10 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { Quote } from './quote.entity';
+import { Quote } from './entities/quote.entity';
 import { CreateUpdateQuoteDTO } from './dto/create-update-quote.dto';
-import { Vote } from './vote.entity';
-import { User } from 'src/auth/user.entity';
+import { Vote } from './entities/vote.entity';
+import { User } from '../auth/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GetFilterDTO } from './dto/get-filter.dto';
 
@@ -152,7 +152,7 @@ export class QuotesService {
     const quote: Quote = this.quotesRepository.create({
       user,
       quote: content,
-      written: new Date(),
+      written: new Date().toISOString(),
     });
 
     try {
@@ -210,7 +210,7 @@ export class QuotesService {
     // if user already down-voted
     if (quoteVote && quoteVote.vote === false) {
       quoteVote.vote = true;
-      quoteVote.reVoted = new Date();
+      quoteVote.reVoted = new Date().toISOString();
 
       try {
         await this.votesRepository.save(quoteVote);
@@ -249,7 +249,7 @@ export class QuotesService {
     // if user already up-voted
     if (quoteVote && quoteVote.vote === true) {
       quoteVote.vote = false;
-      quoteVote.reVoted = new Date();
+      quoteVote.reVoted = new Date().toISOString();
 
       try {
         await this.votesRepository.save(quoteVote);

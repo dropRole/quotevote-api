@@ -26,6 +26,7 @@ import { BasicsUpdateDTO } from './dto/basics-update-dto';
 import { SignUpDTO } from './dto/sign-up.dto';
 import { Public } from '../common/decorators/public.decorator';
 import { User } from './entities/user.entity';
+import { GetUser } from './get-user.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -63,7 +64,7 @@ export class AuthController {
   updateBasics(
     @GetUser() user: User,
     @Body() basicsUpdateDTO: BasicsUpdateDTO,
-  ): Promise<void> {
+  ): Promise<{ accessToken: string }> {
     return this.authService.updateBasics(user, basicsUpdateDTO);
   }
 
