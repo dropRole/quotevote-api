@@ -14,6 +14,7 @@ import {
   Patch,
   Header,
   Query,
+  Delete,
 } from '@nestjs/common/decorators';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { createReadStream } from 'fs';
@@ -21,10 +22,11 @@ import { diskStorage } from 'multer';
 import { join } from 'path';
 import { AuthService } from './auth.service';
 import { AuthCredentialsDTO } from './dto/auth-credentials.dto';
+import { BasicsUpdateDTO } from './dto/basics-update-dto';
 import { SignUpDTO } from './dto/sign-up.dto';
+import { Public } from '../common/decorators/public.decorator';
+import { User } from './entities/user.entity';
 import { GetUser } from './get-user.decorator';
-import { Public } from './public.decorator';
-import { User } from './user.entity';
 
 @Controller('auth')
 export class AuthController {
@@ -58,7 +60,15 @@ export class AuthController {
     return new StreamableFile(file);
   }
 
-  @Patch('/me/update-pass')
+  @Patch('/me/basics')
+  updateBasics(
+    @GetUser() user: User,
+    @Body() basicsUpdateDTO: BasicsUpdateDTO,
+  ): Promise<{ accessToken: string }> {
+    return this.authService.updateBasics(user, basicsUpdateDTO);
+  }
+
+  @Patch('/me/pass')
   updatePass(
     @GetUser() user: User,
     @Body('newpass') newPass: string,
@@ -95,7 +105,7 @@ export class AuthController {
     return this.authService.uploadAvatar(user, avatar.filename);
   }
 
-  @Patch('/me/avatar-unlink')
+  @Delete('/me/avatar-unlink')
   unlinkAvatar(@GetUser() user: User): Promise<void> {
     return this.authService.unlinkAvatar(user);
   }

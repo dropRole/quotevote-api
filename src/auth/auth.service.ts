@@ -7,12 +7,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AuthCredentialsDTO } from './dto/auth-credentials.dto';
 import { SignUpDTO } from './dto/sign-up.dto';
-import { User } from './user.entity';
+import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { SQLErrorCode } from 'src/sql-error-code.enum';
-import { JWTPayload } from './jwt-payload.interface';
+import { JWTPayload } from './strategies/jwt-payload.interface';
 import { JwtService } from '@nestjs/jwt';
 import * as fs from 'fs';
+import { BasicsUpdateDTO } from './dto/basics-update-dto';
 
 @Injectable()
 export class AuthService {
@@ -66,6 +67,49 @@ export class AuthService {
     }
 
     throw new UnauthorizedException('Check your credentials.');
+  }
+
+  async updateBasics(
+    user: User,
+    basicsUpdateDTO: BasicsUpdateDTO,
+  ): Promise<{ accessToken: string }> {
+    const { email, name, surname, username } = basicsUpdateDTO;
+
+    const update = await this.usersRepository.findOne({
+      where: { username: user.username },
+    });
+
+    let accessToken = '';
+
+    // if new username provided which doesn't already exist
+    if (user.username !== username)
+      if (
+        !(await this.usersRepository.findOne({
+          where: { username },
+        }))
+      ) {
+        const payload: JWTPayload = { username };
+
+        accessToken = this.jwtService.sign(payload);
+
+        update.username = username;
+      }
+      // if username already exists
+      else throw new ConflictException('Username already exists.');
+
+    update.email = email;
+    update.name = name;
+    update.surname = surname;
+
+    try {
+      await this.usersRepository.update({ username: user.username }, update);
+    } catch (error) {
+      // if username already exists
+      if (error.code === SQLErrorCode.UniqueViolation)
+        throw new ConflictException('Username already exists.');
+    }
+
+    return { accessToken };
   }
 
   async updatePass(user: User, newPass: string): Promise<void> {
