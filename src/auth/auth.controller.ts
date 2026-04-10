@@ -24,9 +24,8 @@ import { AuthService } from './auth.service';
 import { AuthCredentialsDTO } from './dto/auth-credentials.dto';
 import { BasicsUpdateDTO } from './dto/basics-update-dto';
 import { SignUpDTO } from './dto/sign-up.dto';
-import { GetUser } from './get-user.decorator';
-import { Public } from './public.decorator';
-import { User } from './user.entity';
+import { Public } from '../common/decorators/public.decorator';
+import { User } from './entities/user.entity';
 
 @Controller('auth')
 export class AuthController {
@@ -63,7 +62,7 @@ export class AuthController {
   @Patch('/me/basics')
   updateBasics(
     @GetUser() user: User,
-    @Body() basicsUpdateDTO: BasicsUpdateDTO
+    @Body() basicsUpdateDTO: BasicsUpdateDTO,
   ): Promise<void> {
     return this.authService.updateBasics(user, basicsUpdateDTO);
   }
