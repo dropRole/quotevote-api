@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { Delete, Get, Param, Patch, Query } from '@nestjs/common/decorators';
-import { Public } from 'src/auth/public.decorator';
+import { Public } from 'src/common/decorators/public.decorator';
 import { CreateUpdateQuoteDTO } from './dto/create-update-quote.dto';
 import { Quote } from './entities/quote.entity';
 

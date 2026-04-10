@@ -8,7 +8,7 @@ import { EnvConfig } from './config/env.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeORMAsyncConfig } from './config/typeorm.config';
 import { APP_GUARD } from '@nestjs/core';
-import { JWTGuard } from './auth/jwt.guard';
+import { JWTGuard } from './common/guards/jwt.guard';
 
 @Module({
   imports: [

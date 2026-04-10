@@ -8,8 +8,7 @@ import { JWTPayload } from './jwt-payload.interface';
 export class JWTStrategy extends PassportStrategy(Strategy) {
   constructor(private configService: ConfigService) {
     super({
-      secretOrKey:
-        'M]x!FUb:v_/[U_W#VI8Sh4|H)6a@uITTu>JU;V_{pidaIyR?;{=R!7QDp7#PxMg',
+      secretOrKey: configService.get('JWT_SECRET'),
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     });
   }
