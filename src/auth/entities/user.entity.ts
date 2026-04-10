@@ -1,5 +1,6 @@
 import { Exclude } from 'class-transformer';
-import { Quote } from '../quotes/quote.entity';
+import { Quote } from 'src/quotes/entities/quote.entity';
+import { Vote } from 'src/quotes/entities/vote.entity';
 import { Entity, PrimaryColumn, Column, OneToMany } from 'typeorm';
 
 @Entity('users')
@@ -20,6 +21,12 @@ export class User {
   @Column({ type: 'character varying', length: 64 })
   email: string;
 
+  @Column({ type: 'text', nullable: true })
+  avatar: string;
+
   @OneToMany((_type) => Quote, (quote) => quote.user, { eager: true })
   quotes: Quote[];
+
+  @OneToMany((_type) => Vote, (vote) => vote.quote, { eager: true })
+  votes: Vote[];
 }
