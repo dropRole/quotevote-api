@@ -2,7 +2,6 @@ import { Exclude } from 'class-transformer';
 import { Quote } from 'src/quotes/entities/quote.entity';
 import { Vote } from 'src/quotes/entities/vote.entity';
 import { Entity, PrimaryColumn, Column, OneToMany } from 'typeorm';
-import { Vote } from 'src/quotes/vote.entity';
 
 @Entity('users')
 export class User {
