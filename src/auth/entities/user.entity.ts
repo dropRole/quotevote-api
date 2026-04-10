@@ -27,6 +27,6 @@ export class User {
   @OneToMany((_type) => Quote, (quote) => quote.user, { eager: true })
   quotes: Quote[];
 
-  @OneToMany((_type) => Vote, (vote) => vote.quote, { eager: true })
+  @OneToMany((_type) => Vote, (vote) => vote.user, { eager: true })
   votes: Vote[];
 }
