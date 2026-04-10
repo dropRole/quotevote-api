@@ -1,19 +1,18 @@
-import { User } from 'src/auth/user.entity';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { User } from 'src/auth/entities/user.entity';
+import CommonEntity from 'src/common/common.entity';
+import { Entity, Column, ManyToOne, OneToMany } from 'typeorm';
+import { Vote } from './vote.entity';
 
 @Entity('quotes')
-export class Quote {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class Quote extends CommonEntity {
   @Column({ type: 'character varying', length: 400 })
   quote: string;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  written: Date;
+  written: string;
 
   @Column({ type: 'timestamp', nullable: true })
-  updated: Date;
+  updated: string;
 
   @Column({ type: 'smallint' })
   upvotes: number;
@@ -27,4 +26,7 @@ export class Quote {
     onDelete: 'RESTRICT',
   })
   user: User;
+
+  @OneToMany((_type) => Vote, (vote) => vote.quote, { eager: true })
+  votes: Vote[];
 }
