@@ -1,26 +1,18 @@
-import { User } from '../auth/user.entity';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { User } from 'src/auth/entities/user.entity';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { Quote } from './quote.entity';
+import CommonEntity from 'src/common/entities/common.entity';
 
 @Entity('votes')
-export class Vote {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class Vote extends CommonEntity {
   @Column({ type: 'boolean' })
   vote: boolean;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  voted: Date;
+  voted: string;
 
   @Column({ type: 'timestamp', nullable: true })
-  reVoted: Date;
+  reVoted: string;
 
   @ManyToOne((_type) => User, (user) => user.votes, {
     eager: false,

@@ -1,10 +1,10 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { Delete, Get, Param, Patch, Query } from '@nestjs/common/decorators';
-import { GetUser } from '../auth/get-user.decorator';
-import { Public } from '../auth/public.decorator';
-import { User } from '../auth/user.entity';
+import { GetUser } from '../common/decorators/get-user.decorator';
+import { Public } from '../common/decorators/public.decorator';
+import { User } from '../auth/entities/user.entity';
 import { CreateUpdateQuoteDTO } from './dto/create-update-quote.dto';
-import { GetFilterDTO } from './dto/get-filter.dto';
+import { FilterQuotesDTO } from './dto/filter-quotes.dto';
 import { QuotesService } from './quotes.service';
 
 @Controller('quotes')
@@ -14,10 +14,10 @@ export class QuotesController {
   @Public()
   @Get()
   getQuotes(
-    @Query() getFilterDTO: GetFilterDTO,
+    @Query() filterQuotesDTO: FilterQuotesDTO,
     @GetUser() user?: User,
   ): Promise<Record<any, any>[]> {
-    return this.quotesService.getQuotes(getFilterDTO, user);
+    return this.quotesService.getQuotes(filterQuotesDTO, user);
   }
 
   @Public()
