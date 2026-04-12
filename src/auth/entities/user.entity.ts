@@ -24,7 +24,7 @@ export class User {
   @Column({ type: 'text', nullable: true })
   avatar: string;
 
-  @OneToMany((_type) => Quote, (quote) => quote.user, { eager: true })
+  @OneToMany((_type) => Quote, (quote) => quote.user, { eager: false })
   quotes: Quote[];
 
   @OneToMany((_type) => Vote, (vote) => vote.user, { eager: true })
