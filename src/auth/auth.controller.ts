@@ -44,7 +44,7 @@ export class AuthController {
   login(
     @Body() authCredentialsDTO: AuthCredentialsDTO,
   ): Promise<{ accessToken: string }> {
-    return this.authService.signin(authCredentialsDTO);
+    return this.authService.login(authCredentialsDTO);
   }
 
   @Get('/me')
@@ -74,7 +74,7 @@ export class AuthController {
     @GetUser() user: User,
     @Body() passUpdateDTO: PassUpdateDTO,
   ): Promise<void> {
-    return;
+    return this.authService.updatePass(user, passUpdateDTO);
   }
 
   @Patch('/me/avatar-upload')

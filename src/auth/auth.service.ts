@@ -9,11 +9,12 @@ import { AuthCredentialsDTO } from './dto/auth-credentials.dto';
 import { SignUpDTO } from './dto/sign-up.dto';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
-import { SQLErrorCode } from 'src/sql-error-code.enum';
+import { SQLErrorCode } from '../common/enums/sql-error-code.enum';
 import { JWTPayload } from './strategies/jwt-payload.interface';
 import { JwtService } from '@nestjs/jwt';
 import * as fs from 'fs';
 import { BasicsUpdateDTO } from './dto/basics-update-dto';
+import { PassUpdateDTO } from './dto/pass-update.dto';
 
 @Injectable()
 export class AuthService {
@@ -48,7 +49,7 @@ export class AuthService {
     }
   }
 
-  async signin(
+  async login(
     authCredentialsDTO: AuthCredentialsDTO,
   ): Promise<{ accessToken: string }> {
     const { username, pass } = authCredentialsDTO;
@@ -112,19 +113,28 @@ export class AuthService {
     return { accessToken };
   }
 
-  async updatePass(user: User, newPass: string): Promise<void> {
-    const updateUser = await this.usersRepository.findOne({
-      where: { username: user.username },
-    });
+  async updatePass(user: User, passUpdateDTO: PassUpdateDTO): Promise<void> {
+    const { passCurrent, pass } = passUpdateDTO;
 
-    const salt = await bcrypt.genSalt();
+    // if correct current password
+    if (user && (await bcrypt.compare(passCurrent, user.pass))) {
+      const updateUser = await this.usersRepository.findOne({
+        where: { username: user.username },
+      });
 
-    updateUser.pass = await bcrypt.hash(newPass, salt);
+      const salt = await bcrypt.genSalt();
 
-    this.usersRepository.save(updateUser);
+      updateUser.pass = await bcrypt.hash(pass, salt);
+
+      this.usersRepository.save(updateUser);
+
+      return;
+    }
+
+    throw new ConflictException('Incorrect password.');
   }
 
-  async uploadAvatar(user: User, filename: string): Promise<void> {
+  async uploadAvatar(user: User, filename: string): Promise<{ path: string }> {
     // if user already has an avatar
     if (user.avatar) {
       fs.unlink(`uploads/${filename}`, (err) => {
@@ -137,6 +147,8 @@ export class AuthService {
     user.avatar = `uploads/${filename}`;
 
     this.usersRepository.save(user);
+
+    return { path: user.avatar };
   }
 
   async unlinkAvatar(user: User): Promise<void> {
