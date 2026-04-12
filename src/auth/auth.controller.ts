@@ -20,21 +20,20 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { createReadStream } from 'fs';
 import { diskStorage } from 'multer';
 import { join } from 'path';
-import { AuthService } from './auth.service';
 import { AuthCredentialsDTO } from './dto/auth-credentials.dto';
 import { BasicsUpdateDTO } from './dto/basics-update-dto';
+import { PassUpdateDTO } from './dto/pass-update.dto';
 import { SignUpDTO } from './dto/sign-up.dto';
+import { GetUser } from '../common/decorators/get-user.decorator';
 import { Public } from '../common/decorators/public.decorator';
 import { User } from './entities/user.entity';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
-
   @Public()
   @Post('/signup')
   signup(@Body() signUpDTO: SignUpDTO): Promise<void> {
-    return this.authService.signup(signUpDTO);
+    return;
   }
 
   @Public()
@@ -42,7 +41,7 @@ export class AuthController {
   login(
     @Body() authCredentialsDTO: AuthCredentialsDTO,
   ): Promise<{ accessToken: string }> {
-    return this.authService.signin(authCredentialsDTO);
+    return;
   }
 
   @Get('/me')
@@ -63,16 +62,16 @@ export class AuthController {
   updateBasics(
     @GetUser() user: User,
     @Body() basicsUpdateDTO: BasicsUpdateDTO,
-  ): Promise<void> {
-    return this.authService.updateBasics(user, basicsUpdateDTO);
+  ): Promise<{ accessToken: string }> {
+    return;
   }
 
   @Patch('/me/pass')
   updatePass(
     @GetUser() user: User,
-    @Body('newpass') newPass: string,
+    @Body() passUpdateDTO: PassUpdateDTO,
   ): Promise<void> {
-    return this.authService.updatePass(user, newPass);
+    return;
   }
 
   @Patch('/me/avatar-upload')
@@ -81,10 +80,7 @@ export class AuthController {
       storage: diskStorage({
         destination: './uploads',
         filename(_req, file, callback) {
-          callback(
-            null,
-            `${new Date().getMilliseconds()}_${file.originalname}`,
-          );
+          callback(null, `${new Date().getTime()}_${file.originalname}`);
         },
       }),
     }),
@@ -100,12 +96,12 @@ export class AuthController {
     )
     avatar: Express.Multer.File,
     @GetUser() user: User,
-  ): Promise<void> {
-    return this.authService.uploadAvatar(user, avatar.filename);
+  ): Promise<{ path: string }> {
+    return;
   }
 
   @Delete('/me/avatar-unlink')
   unlinkAvatar(@GetUser() user: User): Promise<void> {
-    return this.authService.unlinkAvatar(user);
+    return;
   }
 }
