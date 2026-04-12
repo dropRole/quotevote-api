@@ -11,7 +11,7 @@ import { CreateUpdateQuoteDTO } from './dto/create-update-quote.dto';
 import { Vote } from './entities/vote.entity';
 import { User } from '../auth/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { GetFilterDTO } from './dto/get-filter.dto';
+import { FilterQuotesDTO } from './dto/filter-quotes.dto';
 
 @Injectable()
 export class QuotesService {
@@ -53,10 +53,10 @@ export class QuotesService {
   }
 
   async getQuotes(
-    getFilterDTO: GetFilterDTO,
+    filterQuotesDTO: FilterQuotesDTO,
     user?: User,
   ): Promise<Record<any, any>[]> {
-    const { search, author, limit } = getFilterDTO;
+    const { search, author, limit } = filterQuotesDTO;
 
     const query = this.quotesRepository.createQueryBuilder('quotes');
     query.innerJoin('quotes.user', 'users');
