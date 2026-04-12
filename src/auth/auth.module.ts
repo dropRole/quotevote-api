@@ -13,8 +13,6 @@ import {
 } from 'src/config/passport-jwt.config';
 import { APP_GUARD } from '@nestjs/core';
 import { JWTGuard } from 'src/common/guards/jwt.guard';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),

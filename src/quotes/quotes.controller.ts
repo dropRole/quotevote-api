@@ -17,7 +17,7 @@ export class QuotesController {
     @Query() filterQuotesDTO: FilterQuotesDTO,
     @GetUser() user?: User,
   ): Promise<Record<any, any>[]> {
-    return;
+    return this.quotesService.getQuotes(filterQuotesDTO, user);
   }
 
   @Public()
