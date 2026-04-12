@@ -1,47 +1,77 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { Delete, Get, Param, Patch, Query } from '@nestjs/common/decorators';
-import { Public } from 'src/common/decorators/public.decorator';
+import { GetUser } from '../common/decorators/get-user.decorator';
+import { Public } from '../common/decorators/public.decorator';
+import { User } from '../auth/entities/user.entity';
 import { CreateUpdateQuoteDTO } from './dto/create-update-quote.dto';
-import { Quote } from './entities/quote.entity';
+import { FilterQuotesDTO } from './dto/filter-quotes.dto';
+import { QuotesService } from './quotes.service';
 
 @Controller('quotes')
 export class QuotesController {
+  constructor(private quotesService: QuotesService) {}
+
   @Public()
   @Get()
-  async getQuotes(@Query('search') search: string): Promise<Quote[]> {
+  getQuotes(
+    @Query() filterQuotesDTO: FilterQuotesDTO,
+    @GetUser() user?: User,
+  ): Promise<Record<any, any>[]> {
     return;
   }
 
   @Public()
   @Get('/:id')
-  async getQuote(@Param('id') id: string): Promise<Quote> {
+  getQuote(
+    @Param('id') id: string,
+    @GetUser() user?: User,
+  ): Promise<Record<any, any>> {
     return;
   }
 
+  @Public()
+  @Get('/rand/one')
+  getRandomQuote(@GetUser() user?: User): Promise<Record<any, any>> {
+    return;
+  }
+
+  @Public()
   @Get('/karma/:username')
   getQuoteKarma(
     @Param('username') username: string,
-  ): Promise<{ quotes: Quote[]; karma: number }> {
+  ): Promise<{ quotes: number; karma: number }> {
     return;
   }
 
   @Post('/me/myquote')
-  async createQuote(
+  createQuote(
+    @GetUser() user: User,
     @Body() createUpdateQuoteDTO: CreateUpdateQuoteDTO,
-  ): Promise<void> {}
+  ): Promise<void> {
+    return;
+  }
 
   @Patch('/me/myquote/:id')
-  async updateQuote(
+  updateQuote(
+    @GetUser() user: User,
     @Param('id') id: string,
     @Body() createUpdateQuoteDTO: CreateUpdateQuoteDTO,
-  ): Promise<void> {}
+  ): Promise<void> {
+    return;
+  }
 
   @Patch('/:id/upvote')
-  async quoteUpVote(@Param('id') id: string): Promise<void> {}
+  quoteUpVote(@GetUser() user: User, @Param('id') id: string): Promise<void> {
+    return;
+  }
 
   @Patch('/:id/downvote')
-  async quoteDownVote(@Param('id') id: string): Promise<void> {}
+  quoteDownVote(@GetUser() user: User, @Param('id') id: string): Promise<void> {
+    return;
+  }
 
   @Delete('/me/:id')
-  async unQuote(@Param('id') id: string): Promise<void> {}
+  unQuote(@GetUser() user: User, @Param('id') id: string): Promise<void> {
+    return;
+  }
 }
