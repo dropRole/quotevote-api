@@ -21,7 +21,7 @@ export class Quote extends CommonEntity {
   downvotes: number;
 
   @ManyToOne((_type) => User, (user) => user.quotes, {
-    eager: false,
+    eager: true,
     onUpdate: 'CASCADE',
     onDelete: 'RESTRICT',
   })
