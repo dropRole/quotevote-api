@@ -6,6 +6,8 @@ const EnvConfigValidationSchema: Joi.ObjectSchema = Joi.object({
   PG_PORT: Joi.number().default(5432),
   PG_USER: Joi.string().default('postgres'),
   PG_PASS: Joi.string().default('postgres'),
+  JWT_SECRET: Joi.string().required(),
+  JWT_EXPIRE: Joi.string().required(),
 });
 
 export const EnvConfig: ConfigModuleOptions = {
