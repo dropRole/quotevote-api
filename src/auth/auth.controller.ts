@@ -20,14 +20,14 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { createReadStream } from 'fs';
 import { diskStorage } from 'multer';
 import { join } from 'path';
-import { AuthService } from './auth.service';
 import { AuthCredentialsDTO } from './dto/auth-credentials.dto';
 import { BasicsUpdateDTO } from './dto/basics-update-dto';
 import { PassUpdateDTO } from './dto/pass-update.dto';
 import { SignUpDTO } from './dto/sign-up.dto';
-import { GetUser } from './get-user.decorator';
-import { Public } from './public.decorator';
-import { User } from './user.entity';
+import { GetUser } from '../common/decorators/get-user.decorator';
+import { Public } from '../common/decorators/public.decorator';
+import { User } from './entities/user.entity';
+import { AuthService } from './auth.service';
 
 @Controller('auth')
 export class AuthController {

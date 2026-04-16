@@ -34,11 +34,12 @@ lerna-debug.log*
 !.vscode/launch.json
 !.vscode/extensions.json
 
-# .env files
-.env.stage.*
+# config files
+/src/config/.env.stage.*
 
 # migrations dir
-migrations
+/migrations
 
 # static asset uploads
-uploads
+/uploads
+
