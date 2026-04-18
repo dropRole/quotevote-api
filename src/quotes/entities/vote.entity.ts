@@ -1,7 +1,7 @@
-import { User } from 'src/auth/entities/user.entity';
+import { User } from '../../auth/entities/user.entity';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { Quote } from './quote.entity';
-import CommonEntity from 'src/common/entities/common.entity';
+import CommonEntity from '../../common/entities/common.entity';
 
 @Entity('votes')
 export class Vote extends CommonEntity {

@@ -1,6 +1,6 @@
 import { Exclude } from 'class-transformer';
-import { Quote } from 'src/quotes/entities/quote.entity';
-import { Vote } from 'src/quotes/entities/vote.entity';
+import { Quote } from '../../quotes/entities/quote.entity';
+import { Vote } from '../../quotes/entities/vote.entity';
 import { Entity, PrimaryColumn, Column, OneToMany } from 'typeorm';
 
 @Entity('users')

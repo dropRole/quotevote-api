@@ -1,5 +1,5 @@
-import { User } from 'src/auth/entities/user.entity';
-import CommonEntity from 'src/common/entities/common.entity';
+import { User } from '../../auth/entities/user.entity';
+import CommonEntity from '../../common/entities/common.entity';
 import { Entity, Column, ManyToOne, OneToMany } from 'typeorm';
 import { Vote } from './vote.entity';
 
