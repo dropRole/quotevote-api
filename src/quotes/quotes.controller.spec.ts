@@ -4,14 +4,13 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { authorize } from 'passport';
-import { User } from '../auth/user.entity';
+import { User } from '../auth/entities/user.entity';
 import { CreateUpdateQuoteDTO } from './dto/create-update-quote.dto';
-import { GetFilterDTO } from './dto/get-filter.dto';
-import { Quote } from './quote.entity';
+import { FilterQuotesDTO } from './dto/filter-quotes.dto';
+import { Quote } from './entities/quote.entity';
 import { QuotesController } from './quotes.controller';
 import { QuotesService } from './quotes.service';
-import { Vote } from './vote.entity';
+import { Vote } from './entities/vote.entity';
 
 describe('QuotesController', () => {
   let controller: QuotesController;
@@ -31,18 +30,22 @@ describe('QuotesController', () => {
     {
       id: 'd646ff95-2acb-4a86-8221-ae92be19cfc8',
       quote: 'Acta, non verba',
-      written: new Date(),
+      written: new Date().toISOString(),
       user: user,
       updated: null,
       votes: [],
+      upvotes: 0,
+      downvotes: 0,
     },
     {
       id: '4264c3eb-e352-4e23-a3ac-02def23fc1f0',
       quote: 'Omnia mea mecum porto',
-      written: new Date(),
+      written: new Date().toISOString(),
       user: user,
       updated: null,
       votes: [new Vote()],
+      upvotes: 0,
+      downvotes: 0,
     },
   ];
 
@@ -81,12 +84,12 @@ describe('QuotesController', () => {
 
   describe('getQuotes', () => {
     it('should return an array of quotes', async () => {
-      const getFilterDTO: GetFilterDTO = new GetFilterDTO();
-      getFilterDTO.author = user.username;
-      getFilterDTO.search = 'most';
-      getFilterDTO.limit = 10;
+      const filterQuotesDTO: FilterQuotesDTO = new FilterQuotesDTO();
+      filterQuotesDTO.author = user.username;
+      filterQuotesDTO.search = 'most';
+      filterQuotesDTO.limit = 10;
 
-      const result = await controller.getQuotes(getFilterDTO, user);
+      const result = await controller.getQuotes(filterQuotesDTO, user);
       expect(result).toBeInstanceOf(Array<Record<any, any>>);
     });
   });

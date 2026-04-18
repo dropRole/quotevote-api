@@ -21,7 +21,7 @@ import { createReadStream } from 'fs';
 import { diskStorage } from 'multer';
 import { join } from 'path';
 import { AuthCredentialsDTO } from './dto/auth-credentials.dto';
-import { BasicsUpdateDTO } from './dto/basics-update-dto';
+import { BasicsUpdateDTO } from './dto/basics-update.dto';
 import { PassUpdateDTO } from './dto/pass-update.dto';
 import { SignUpDTO } from './dto/sign-up.dto';
 import { GetUser } from '../common/decorators/get-user.decorator';

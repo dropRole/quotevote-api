@@ -13,7 +13,7 @@ import { SQLErrorCode } from '../common/enums/sql-error-code.enum';
 import { JWTPayload } from './strategies/jwt-payload.interface';
 import { JwtService } from '@nestjs/jwt';
 import * as fs from 'fs';
-import { BasicsUpdateDTO } from './dto/basics-update-dto';
+import { BasicsUpdateDTO } from './dto/basics-update.dto';
 import { PassUpdateDTO } from './dto/pass-update.dto';
 
 @Injectable()

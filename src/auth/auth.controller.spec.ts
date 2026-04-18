@@ -3,7 +3,7 @@ import { AuthController } from './auth.controller';
 import { generateKeySync } from 'crypto';
 import { AuthCredentialsDTO } from './dto/auth-credentials.dto';
 import { SignUpDTO } from './dto/sign-up.dto';
-import { User } from './user.entity';
+import { User } from './entities/user.entity';
 import {
   ConflictException,
   StreamableFile,
@@ -12,7 +12,7 @@ import {
 import { createReadStream } from 'fs';
 import { join } from 'path';
 import { AuthService } from './auth.service';
-import { BasicsUpdateDTO } from './dto/basics-update-dto';
+import { BasicsUpdateDTO } from './dto/basics-update.dto';
 import { PassUpdateDTO } from './dto/pass-update.dto';
 
 describe('AuthController', () => {
@@ -27,7 +27,7 @@ describe('AuthController', () => {
   user.surname = 'Collins';
   user.username = 'philcollins';
   user.pass = 'philCollins@23';
-  user.avatar = 'uploads/1676601431847_avataaars.png';
+  user.avatar = 'uploads/avatar.png';
   user.quotes = [];
   user.votes = [];
 
@@ -64,7 +64,6 @@ describe('AuthController', () => {
                 generateKeySync('aes', { length: 128 }).export().toString(),
               ),
             updatePass: jest.fn(),
-            uploadAvatar: jest.fn().mockResolvedValue(users[0].avatar),
             unlinkAvatar: jest.fn(),
           };
       })
@@ -143,13 +142,6 @@ describe('AuthController', () => {
     });
   });
 
-  describe('getAvatar', () => {
-    it('should return a readable stream an avatar', async () => {
-      const result = controller.getAvatar(users[0].avatar);
-      expect(result).toBeInstanceOf(StreamableFile);
-    });
-  });
-
   describe('updateBasics', () => {
     const basicsUpdateDTO: BasicsUpdateDTO = users[0];
 
@@ -201,42 +193,6 @@ describe('AuthController', () => {
         });
 
       expect(service.updatePass).toThrow('Incorect password.');
-    });
-  });
-
-  describe('uploadAvatar', () => {
-    it('should return the avatar path', async () => {
-      const file: Express.Multer.File = {
-        destination: './uplaods',
-        fieldname: 'avatar',
-        filename: '1676601431847_avataaars.png',
-        originalname: '1676601431847_avataaars.png',
-        size: 2048,
-        mimetype: 'image/png',
-        path: join(process.cwd(), users[0].avatar),
-        stream: createReadStream(join(process.cwd(), users[0].avatar)),
-        buffer: Buffer.alloc(2048),
-        encoding: 'utf-9',
-      };
-
-      const result = await controller.uploadAvatar(file, users[0]);
-      expect(typeof result).toBe('string');
-    });
-
-    it('should throw a ConflictException', async () => {
-      jest
-        .spyOn(service, 'uploadAvatar')
-        .mockImplementation((): Promise<{ path: string }> => {
-          const user: User = users.find(
-            (user) => user.username === 'philcollins',
-          );
-
-          if (user.avatar)
-            throw new ConflictException('Avatar was already uploaded.');
-          return new Promise((resolve) => {});
-        });
-
-      expect(service.uploadAvatar).toThrow('Avatar was already uploaded.');
     });
   });
 
