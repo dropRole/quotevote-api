@@ -14,12 +14,12 @@ export class SignUpDTO {
 
   @IsString()
   @IsNotEmpty()
-  @MaxLength(13)
+  @MaxLength(100)
   name: string;
 
   @IsString()
   @IsNotEmpty()
-  @MaxLength(20)
+  @MaxLength(100)
   surname: string;
 
   @IsString()
