@@ -6,7 +6,7 @@ import { QuotesModule } from './quotes/quotes.module';
 import { ConfigModule } from '@nestjs/config';
 import { EnvConfig } from './config/env.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TypeORMAsyncConfig } from './config/typeorm.config';
+import { TypeORMAsyncConfig } from './config/typeorm/typeorm.config';
 import { APP_GUARD } from '@nestjs/core';
 import { JWTGuard } from './common/guards/jwt.guard';
 

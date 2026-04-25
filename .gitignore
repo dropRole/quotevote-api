@@ -37,5 +37,9 @@ lerna-debug.log*
 # config files
 /src/config/.env.stage.*
 
+# data source config file 
+/src/config/typeorm/seeds/data-source.ts
+
 # migration files
 /src/migrations
+
