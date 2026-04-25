@@ -1,6 +1,6 @@
 import { Exclude } from 'class-transformer';
-import { Quote } from 'src/quotes/entities/quote.entity';
-import { Vote } from 'src/quotes/entities/vote.entity';
+import { Quote } from '../../quotes/entities/quote.entity';
+import { Vote } from '../../quotes/entities/vote.entity';
 import { Entity, PrimaryColumn, Column, OneToMany } from 'typeorm';
 
 @Entity('users')
@@ -12,10 +12,10 @@ export class User {
   @Exclude({ toPlainOnly: true })
   pass: string;
 
-  @Column({ type: 'character varying', length: 13 })
+  @Column({ type: 'character varying', length: 100 })
   name: string;
 
-  @Column({ type: 'character varying', length: 20 })
+  @Column({ type: 'character varying', length: 100 })
   surname: string;
 
   @Column({ type: 'character varying', length: 64 })

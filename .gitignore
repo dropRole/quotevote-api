@@ -37,9 +37,13 @@ lerna-debug.log*
 # config files
 /src/config/.env.stage.*
 
-# migrations dir
-/migrations
+# data source config file 
+/src/config/typeorm/seeds/data-source.ts
+
+# migration files
+src/migrations
 
 # static asset uploads
 /uploads
+
 

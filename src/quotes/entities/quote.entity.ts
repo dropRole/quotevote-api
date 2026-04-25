@@ -1,6 +1,6 @@
-import { User } from 'src/auth/entities/user.entity';
-import CommonEntity from 'src/common/entities/common.entity';
-import { Entity, Column, ManyToOne, OneToMany } from 'typeorm';
+import { User } from '../../auth/entities/user.entity';
+import CommonEntity from '../../common/entities/common.entity';
+import { Entity, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { Vote } from './vote.entity';
 
 @Entity('quotes')
@@ -25,6 +25,7 @@ export class Quote extends CommonEntity {
     onUpdate: 'CASCADE',
     onDelete: 'RESTRICT',
   })
+  @JoinColumn({ name: 'username' })
   user: User;
 
   @OneToMany((_type) => Vote, (vote) => vote.quote, { eager: true })
