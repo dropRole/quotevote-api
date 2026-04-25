@@ -43,10 +43,10 @@ export class QuotesService {
       } catch (error) {}
 
       // if upvoted
-      if (quoteVote && quoteVote.vote) quotes[i].votes_vote = true;
+      if (quoteVote && quoteVote.vote) quotes[i].voted = true;
 
       // if downvoted
-      if (quoteVote && !quoteVote.vote) quotes[i].votes_vote = false;
+      if (quoteVote && !quoteVote.vote) quotes[i].voted = false;
     }
 
     return quotes;
@@ -60,13 +60,16 @@ export class QuotesService {
 
     const query = this.quotesRepository.createQueryBuilder('quotes');
     query.innerJoin('quotes.user', 'users');
-    query.leftJoinAndSelect('quotes.votes', 'votes');
-    query.select('quotes');
-    query.addSelect("users.name || ' ' || users.surname", 'users_fullname');
-    query.addSelect('users.avatar');
+    query.leftJoin('quotes.votes', 'votes');
+    query.select('quotes.id', 'id');
+    query.addSelect('quotes.quote', 'quote');
+    query.addSelect('quotes.written', 'written');
+    query.addSelect('quotes.updated', 'updated');
+    query.addSelect("users.name || ' ' || users.surname", 'fullname');
+    query.addSelect('users.avatar', 'avatar');
     query.addSelect(
       '(COUNT(CASE WHEN votes.vote = true THEN 1 END) - COUNT(CASE WHEN votes.vote = false THEN 1 END))',
-      'votes_total',
+      'totalVotes',
     );
 
     // if quote author provided
@@ -76,11 +79,11 @@ export class QuotesService {
 
     switch (search) {
       case 'most':
-        query.orderBy('votes_total', 'DESC');
+        query.orderBy('"totalVotes"', 'DESC');
         break;
 
       case 'least':
-        query.orderBy('votes_total', 'ASC');
+        query.orderBy('"totalVotes"', 'ASC');
         break;
 
       case 'recent':
