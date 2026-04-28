@@ -15,6 +15,7 @@ import {
   Header,
   Query,
   Delete,
+  Res,
 } from '@nestjs/common/decorators';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { createReadStream } from 'fs';
@@ -27,6 +28,7 @@ import { SignUpDTO } from './dto/sign-up.dto';
 import { GetUser } from '../common/decorators/get-user.decorator';
 import { Public } from '../common/decorators/public.decorator';
 import { User } from './entities/user.entity';
+import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -39,8 +41,9 @@ export class AuthController {
   @Public()
   @Post('/login')
   login(
+    @Res({ passthrough: true }) response: Response,
     @Body() authCredentialsDTO: AuthCredentialsDTO,
-  ): Promise<{ accessToken: string }> {
+  ): Promise<void> {
     return;
   }
 
@@ -60,9 +63,10 @@ export class AuthController {
 
   @Patch('/me/basics')
   updateBasics(
+    @Res({ passthrough: true }) response: Response,
     @GetUser() user: User,
     @Body() basicsUpdateDTO: BasicsUpdateDTO,
-  ): Promise<{ accessToken: string }> {
+  ): Promise<void> {
     return;
   }
 
