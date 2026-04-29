@@ -47,7 +47,7 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
     @Body() authCredentialsDTO: AuthCredentialsDTO,
   ): Promise<void> {
-    return;
+    return this.authService.login(response, authCredentialsDTO);
   }
 
   @Get('/me')

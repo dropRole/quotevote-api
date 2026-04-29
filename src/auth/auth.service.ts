@@ -15,6 +15,9 @@ import { JwtService } from '@nestjs/jwt';
 import * as fs from 'fs';
 import { BasicsUpdateDTO } from './dto/basics-update.dto';
 import { PassUpdateDTO } from './dto/pass-update.dto';
+import { Response } from 'express';
+import { ConfigService } from '@nestjs/config';
+import * as moment from 'moment';
 
 @Injectable()
 export class AuthService {
@@ -22,6 +25,7 @@ export class AuthService {
     @InjectRepository(User)
     public usersRepository: Repository<User>,
     private jwtService: JwtService,
+    private configService: ConfigService,
   ) {}
 
   async signup(signUpDTO: SignUpDTO): Promise<void> {
@@ -50,8 +54,9 @@ export class AuthService {
   }
 
   async login(
+    response: Response,
     authCredentialsDTO: AuthCredentialsDTO,
-  ): Promise<{ accessToken: string }> {
+  ): Promise<void> {
     const { username, pass } = authCredentialsDTO;
 
     const user: User = await this.usersRepository.findOne({
@@ -64,7 +69,18 @@ export class AuthService {
 
       const accessToken: string = this.jwtService.sign(payload);
 
-      return { accessToken };
+      response.cookie('quotevote', accessToken, {
+        httpOnly: true,
+        secure: process.env.STAGE === 'prod',
+        expires: moment(new Date())
+          .add(
+            this.configService.get('JWT_EXPIRE').split('seconds')[0],
+            'seconds',
+          )
+          .toDate(),
+      });
+
+      return;
     }
 
     throw new UnauthorizedException('Check your credentials.');
