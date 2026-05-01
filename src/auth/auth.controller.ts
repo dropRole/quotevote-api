@@ -47,7 +47,7 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
     @Body() authCredentialsDTO: AuthCredentialsDTO,
   ): Promise<void> {
-    return;
+    return this.authService.login(response, authCredentialsDTO);
   }
 
   @Get('/me')
@@ -70,7 +70,7 @@ export class AuthController {
     @GetUser() user: User,
     @Body() basicsUpdateDTO: BasicsUpdateDTO,
   ): Promise<void> {
-    return;
+    return this.authService.updateBasics(response, user, basicsUpdateDTO);
   }
 
   @Patch('/me/pass')
