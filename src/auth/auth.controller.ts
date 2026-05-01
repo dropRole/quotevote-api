@@ -70,7 +70,7 @@ export class AuthController {
     @GetUser() user: User,
     @Body() basicsUpdateDTO: BasicsUpdateDTO,
   ): Promise<void> {
-    return;
+    return this.authService.updateBasics(response, user, basicsUpdateDTO);
   }
 
   @Patch('/me/pass')

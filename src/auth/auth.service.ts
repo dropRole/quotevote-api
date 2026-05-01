@@ -16,8 +16,8 @@ import * as fs from 'fs';
 import { BasicsUpdateDTO } from './dto/basics-update.dto';
 import { PassUpdateDTO } from './dto/pass-update.dto';
 import { Response } from 'express';
-import { ConfigService } from '@nestjs/config';
 import * as moment from 'moment';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -69,14 +69,11 @@ export class AuthService {
 
       const accessToken: string = this.jwtService.sign(payload);
 
-      response.cookie('quotevote', accessToken, {
+      response.cookie('quotevote-jwt', accessToken, {
         httpOnly: true,
         secure: process.env.STAGE === 'prod',
         expires: moment(new Date())
-          .add(
-            this.configService.get('JWT_EXPIRE').split('seconds')[0],
-            'seconds',
-          )
+          .add(this.configService.get('JWT_EXPIRE').split('seconds')[0])
           .toDate(),
       });
 
@@ -87,9 +84,10 @@ export class AuthService {
   }
 
   async updateBasics(
+    response: Response,
     user: User,
     basicsUpdateDTO: BasicsUpdateDTO,
-  ): Promise<{ accessToken: string }> {
+  ): Promise<void> {
     const { email, name, surname, username } = basicsUpdateDTO;
 
     const update = await this.usersRepository.findOne({
@@ -126,7 +124,13 @@ export class AuthService {
         throw new ConflictException('Username already exists.');
     }
 
-    return { accessToken };
+    response.cookie('quotevote-jwt', accessToken, {
+      httpOnly: true,
+      secure: process.env.STAGE === 'prod',
+      expires: moment(new Date())
+        .add(this.configService.get('JWT_EXPIRE').split('seconds')[0])
+        .toDate(),
+    });
   }
 
   async updatePass(user: User, passUpdateDTO: PassUpdateDTO): Promise<void> {
