@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
 import { QuotesModule } from './quotes/quotes.module';
+import { ConfigModule } from '@nestjs/config';
+import ENV_CONFIG from './config/env/env.config';
 
 @Module({
-  imports: [AuthModule, QuotesModule],
+  imports: [AuthModule, QuotesModule, ConfigModule.forRoot(ENV_CONFIG)],
   controllers: [],
   providers: [],
 })
