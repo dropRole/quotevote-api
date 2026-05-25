@@ -13,6 +13,7 @@ const ENV_CONFIG: ConfigModuleOptions = {
     PG_PASS: joi.string().required(),
     MOCK_USER: joi.string().required(),
     MOCK_USER_PASS: joi.string().required(),
+    CORS_ORIGIN: joi.string().required(),
   }),
 };
 
