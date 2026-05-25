@@ -6,6 +6,13 @@ const ENV_CONFIG: ConfigModuleOptions = {
   envFilePath: `src/config/env/.env.stage.${process.env.STAGE}`,
   validationSchema: joi.object({
     PORT: joi.number().required(),
+    PG_HOST: joi.string().required(),
+    PG_PORT: joi.number().required(),
+    PG_DB: joi.string().required(),
+    PG_USER: joi.string().required(),
+    PG_PASS: joi.string().required(),
+    MOCK_USER: joi.string().required(),
+    MOCK_USER_PASS: joi.string().required(),
   }),
 };
 
