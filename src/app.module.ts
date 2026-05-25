@@ -5,6 +5,8 @@ import { ConfigModule } from '@nestjs/config';
 import ENV_CONFIG from './config/env/env.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import TYPEORM_CONFIG from './config/typeorm/typeorm.config';
+import { APP_GUARD } from '@nestjs/core';
+import { JWTGuard } from './auth/guards/jwt.guard';
 
 @Module({
   imports: [
@@ -14,6 +16,11 @@ import TYPEORM_CONFIG from './config/typeorm/typeorm.config';
     TypeOrmModule.forRootAsync(TYPEORM_CONFIG),
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: JWTGuard,
+    },
+  ],
 })
 export class AppModule {}
