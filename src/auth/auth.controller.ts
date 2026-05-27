@@ -26,6 +26,7 @@ import { diskStorage } from 'multer';
 import { Response } from 'express';
 import { randomUUID } from 'crypto';
 import * as path from 'path';
+import GetAvatarDTO from './dto/get-avatar.dto';
 import { AuthService } from './auth.service';
 import { join } from 'path';
 import { createReadStream, existsSync } from 'fs';
@@ -62,7 +63,7 @@ export class AuthController {
   @Public()
   @Get('/me/avatar')
   @Header('Content-Type', 'image/*')
-  getAvatar(@Query('path') path: string) {
+  getAvatar(@Query() getAvatarDTO: GetAvatarDTO) {
     const filePath = join(process.cwd(), path);
 
     if (!existsSync(filePath))
