@@ -8,6 +8,7 @@ import { JwtModule } from '@nestjs/jwt';
 import JWT_CONFIG from 'src/config/auth/jwt.config';
 import { JWTStrategy } from './strategies/jwt.strategy';
 import { ConfigModule } from '@nestjs/config';
+import { LoggerModule } from 'src/logger/logger.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { ConfigModule } from '@nestjs/config';
     ConfigModule,
     PassportModule,
     JwtModule.registerAsync(JWT_CONFIG),
+    LoggerModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JWTStrategy],

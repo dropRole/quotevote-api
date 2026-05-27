@@ -5,10 +5,12 @@ import {
   Delete,
   Get,
   Header,
+  NotFoundException,
   Patch,
   Post,
   Query,
   Res,
+  StreamableFile,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -24,40 +26,66 @@ import { diskStorage } from 'multer';
 import { Response } from 'express';
 import { randomUUID } from 'crypto';
 import * as path from 'path';
+import { AuthService } from './auth.service';
+import { join } from 'path';
+import { createReadStream, existsSync } from 'fs';
 
 @Controller('auth')
 export class AuthController {
+  constructor(private authService: AuthService) {}
+
   @Public()
   @Post('/signup')
-  signup(@Body() signUpDTO: SignupDTO) {}
+  signup(@Body() signupDTO: SignupDTO) {
+    return this.authService.signup(signupDTO);
+  }
 
   @Public()
   @Post('/login')
   login(
     @Res({ passthrough: true }) response: Response,
     @Body() authCredentialsDTO: AuthCredentialsDTO,
-  ) {}
+  ) {
+    return this.authService.login(response, authCredentialsDTO);
+  }
 
   @Post('/logout')
-  logout(@Res({ passthrough: true }) response: Response) {}
+  logout(@Res({ passthrough: true }) response: Response) {
+    response.clearCookie('quotevote-jwt');
+  }
 
   @Get('/me')
-  getInfo(@GetUser() user: User) {}
+  getInfo(@GetUser() user: User) {
+    return user;
+  }
 
   @Public()
   @Get('/me/avatar')
   @Header('Content-Type', 'image/*')
-  getAvatar(@Query('path') path: string) {}
+  getAvatar(@Query('path') path: string) {
+    const filePath = join(process.cwd(), path);
+
+    if (!existsSync(filePath))
+      throw new NotFoundException('Avatar was not found.');
+
+    const stream = createReadStream(filePath);
+
+    return new StreamableFile(stream);
+  }
 
   @Patch('/me/basics')
   updateBasics(
     @Res({ passthrough: true }) response: Response,
     @GetUser() user: User,
     @Body() basicsUpdateDTO: BasicsUpdateDTO,
-  ) {}
+  ) {
+    return this.authService.updateBasics(response, user, basicsUpdateDTO);
+  }
 
   @Patch('/me/pass')
-  updatePass(@GetUser() user: User, @Body() passUpdateDTO: PassUpdateDTO) {}
+  updatePass(@GetUser() user: User, @Body() passUpdateDTO: PassUpdateDTO) {
+    return this.authService.updatePass(user, passUpdateDTO);
+  }
 
   @Patch('/me/avatar-upload')
   @UseInterceptors(
@@ -73,7 +101,7 @@ export class AuthController {
 
         callback(null, true);
       },
-      limits: { fileSize: 15000 },
+      limits: { fileSize: 2000000 },
       storage: diskStorage({
         destination: './uploads',
         filename(_req, file, callback) {
@@ -89,8 +117,12 @@ export class AuthController {
   uploadAvatar(
     @UploadedFile() avatar: Express.Multer.File,
     @GetUser() user: User,
-  ) {}
+  ) {
+    return this.authService.uploadAvatar(user, avatar.filename);
+  }
 
   @Delete('/me/avatar-unlink')
-  unlinkAvatar(@GetUser() user: User) {}
+  unlinkAvatar(@GetUser() user: User) {
+    return this.authService.unlinkAvatar(user);
+  }
 }
