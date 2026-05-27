@@ -24,6 +24,7 @@ import { diskStorage } from 'multer';
 import { Response } from 'express';
 import { randomUUID } from 'crypto';
 import * as path from 'path';
+import GetAvatarDTO from './dto/get-avatar.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -47,7 +48,7 @@ export class AuthController {
   @Public()
   @Get('/me/avatar')
   @Header('Content-Type', 'image/*')
-  getAvatar(@Query('path') path: string) {}
+  getAvatar(@Query() getAvatarDTO: GetAvatarDTO) {}
 
   @Patch('/me/basics')
   updateBasics(
