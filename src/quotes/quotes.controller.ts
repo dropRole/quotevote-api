@@ -13,6 +13,8 @@ import FilterQuotesDTO from './dto/filter-quotes.dto';
 import GetUser from 'src/common/decorators/get-user.decorator';
 import User from 'src/auth/entities/user.entity';
 import CreateQuoteDTO from './dto/create-quote.dto';
+import GetQuoteDTO from './dto/get-quote.dto';
+import VoteOnQuoteDTO from './dto/vote-on-quote.dto';
 import { QuotesService } from './quotes.service';
 
 @Controller('quotes')
@@ -27,9 +29,11 @@ export class QuotesController {
 
   @Public()
   @Get('/:id')
-  getQuote(@Param('id') id: string, @GetUser() user?: User) {
-    return this.quotesService.getQuote(id, user);
-  }
+  getQuote(@Param('id') getQuoteDTO: GetQuoteDTO, @GetUser() user?: User) {}
+
+  @Public()
+  @Get('/rand/one')
+  getRandomQuote(@GetUser() user?: User) {}
 
   @Public()
   @Get('/karma/:username')
@@ -47,9 +51,14 @@ export class QuotesController {
     @GetUser() user: User,
     @Param('id') id: string,
     @Body() createQuoteDTO: CreateQuoteDTO,
-  ) {
-    return this.quotesService.updateQuote(user, id, createQuoteDTO);
-  }
+  ) {}
+
+  @Patch('/:id/vote')
+  voteOnQuote(
+    @GetUser() user: User,
+    @Param('id') id: string,
+    @Body() voteOnQuote: VoteOnQuoteDTO,
+  ) {}
 
   @Delete('/me/:id')
   unQuote(@GetUser() user: User, @Param('id') id: string) {
