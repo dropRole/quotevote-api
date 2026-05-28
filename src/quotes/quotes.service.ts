@@ -22,6 +22,36 @@ export class QuotesService {
     private logger: FileLogger,
   ) {}
 
+  private async checkForVotedQuotes(
+    quotes: Record<string, string | number>[],
+    username: string,
+  ) {
+    for (let i = 0; i <= quotes.length - 1; i++) {
+      const query = this.voteRepo.createQueryBuilder('vote');
+      query.innerJoin('vote.quote', 'quote');
+      query.where('vote."quoteId" = :id', {
+        id: quotes[i].id,
+      });
+      query.andWhere('vote.voter = :username', {
+        username,
+      });
+
+      let quoteVote: Vote | null = null;
+
+      try {
+        quoteVote = await query.getOne();
+      } catch (error) {
+        this.logger.error(error.message, 'checkForVotedQuotes');
+      }
+
+      if (quoteVote && quoteVote.up) quotes[i].votedOn = 'up';
+
+      if (quoteVote && !quoteVote.up) quotes[i].votedOn = 'down';
+    }
+
+    return quotes;
+  }
+
   async getQuotes(filterQuotesDTO: FilterQuotesDTO, user?: User) {
     const { searchFor, author, limit } = filterQuotesDTO;
 
@@ -78,6 +108,8 @@ export class QuotesService {
 
       throw new InternalServerErrorException('Failed to fetch quotes.');
     }
+
+    if (user) return await this.checkForVotedQuotes(quotes, user.username);
 
     return quotes;
   }
