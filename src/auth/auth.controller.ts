@@ -64,6 +64,8 @@ export class AuthController {
   @Get('/me/avatar')
   @Header('Content-Type', 'image/*')
   getAvatar(@Query() getAvatarDTO: GetAvatarDTO) {
+    const { path } = getAvatarDTO;
+
     const filePath = join(process.cwd(), path);
 
     if (!existsSync(filePath))
@@ -119,6 +121,8 @@ export class AuthController {
     @UploadedFile() avatar: Express.Multer.File,
     @GetUser() user: User,
   ) {
+    if (!avatar) throw new NotFoundException('Avatar must be uploaded.');
+
     return this.authService.uploadAvatar(user, avatar.filename);
   }
 
