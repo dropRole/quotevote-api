@@ -1,4 +1,219 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import Quote from './entities/quote.entity';
+import { Repository } from 'typeorm';
+import Vote from './entities/vote.entity';
+import FilterQuotesDTO from './dto/filter-quotes.dto';
+import User from 'src/auth/entities/user.entity';
+import FileLogger from 'src/logger/file-logger.service';
+import CreateUpdateQuoteDTO from './dto/create-quote.dto';
 
 @Injectable()
-export class QuotesService {}
+export class QuotesService {
+  constructor(
+    @InjectRepository(Quote) private quoteRepo: Repository<Quote>,
+    @InjectRepository(Vote) private voteRepo: Repository<Vote>,
+    private logger: FileLogger,
+  ) {}
+
+  async getQuotes(filterQuotesDTO: FilterQuotesDTO, user?: User) {
+    const { searchFor, author, limit } = filterQuotesDTO;
+
+    const query = this.quoteRepo.createQueryBuilder('quote');
+    query.innerJoin('quote.user', 'user');
+    query.leftJoin('quote.votes', 'vote');
+    query.select('quote.id', 'id');
+    query.addSelect('quote.content', 'content');
+    query.addSelect('quote.written', 'written');
+    query.addSelect('quote.updated', 'updated');
+    query.addSelect('user.name', 'name');
+    query.addSelect('user.surname', 'surname');
+    query.addSelect('user.avatar', 'avatar');
+    query.addSelect(
+      '(COUNT(CASE WHEN vote.up = true THEN 1 END) - COUNT(CASE WHEN vote.up = false THEN 1 END))',
+      'totalVotes',
+    );
+
+    if (author) query.where('quote.username = :author', { author });
+
+    query.groupBy('quote.id, user.avatar, user.name, user.surname');
+
+    switch (searchFor) {
+      case 'mostLiked':
+        query.orderBy('"totalVotes"', 'DESC');
+        break;
+
+      case 'leastLiked':
+        query.orderBy('"totalVotes"', 'ASC');
+        break;
+
+      case 'recent':
+        query.orderBy('written', 'DESC');
+        break;
+
+      case 'votedFor':
+        query.where('votes.username = :username', {
+          username: author,
+        });
+        break;
+
+      default:
+        query.orderBy('written', 'DESC');
+    }
+
+    query.limit(limit);
+
+    let quotes: Record<string, string | number>[] = [];
+
+    try {
+      quotes = await query.execute();
+    } catch (error) {
+      this.logger.error(error.message, 'getQuotes');
+
+      throw new InternalServerErrorException('Failed to fetch quotes.');
+    }
+
+    return quotes;
+  }
+
+  async getQuote(id: string, user?: User) {
+    const query = this.quoteRepo.createQueryBuilder('quote');
+    query.innerJoin('quote.user', 'user');
+    query.leftJoinAndSelect('quote.votes', 'vote');
+    query.select('quote.id', 'id');
+    query.addSelect('quote.content', 'content');
+    query.addSelect('quote.written', 'written');
+    query.addSelect('quote.updated', 'updated');
+    query.addSelect('user.name', 'name');
+    query.addSelect('user.surname', 'surname');
+    query.addSelect('user.avatar', 'avatar');
+    query.addSelect(
+      '(COUNT(CASE WHEN vote.up = true THEN 1 END) - COUNT(CASE WHEN vote.up = false THEN 1 END))',
+      'totalVotes',
+    );
+
+    query.where('quote.id = :id', { id });
+
+    query.groupBy('quote.id, user.avatar, user.name, user.surname');
+
+    let quote: Record<string, string | number>;
+
+    try {
+      quote = (await query.execute())[0];
+    } catch (error) {
+      this.logger.error(error.message, 'getQuote');
+
+      throw new InternalServerErrorException('Failed to fetch quote.');
+    }
+
+    return quote;
+  }
+
+  async getQuoteKarma(username: string) {
+    const totalQuery = this.quoteRepo.createQueryBuilder('quote');
+    totalQuery.select('quote.author');
+    totalQuery.addSelect('COUNT(quote.id)', 'total');
+    totalQuery.where('quote.author = :username ', { username });
+    totalQuery.groupBy('quote.author');
+
+    const karmaQuery = this.quoteRepo.createQueryBuilder('quote');
+    karmaQuery.innerJoin('quote.user', 'user');
+    karmaQuery.innerJoin('quote.votes', 'vote');
+    karmaQuery.select('user.username');
+    karmaQuery.addSelect(
+      '(COUNT(CASE WHEN vote.up = true THEN 1 END) - COUNT(CASE WHEN vote.up = false THEN 1 END))',
+      'karma',
+    );
+    karmaQuery.where('quote.author = :username ', { username });
+    karmaQuery.groupBy('user.username');
+
+    const result: { quotes: number; karma: number } = { quotes: 0, karma: 0 };
+    try {
+      const { total } = (await totalQuery.execute())[0] ?? { total: 0 };
+
+      const { karma } = (await karmaQuery.execute())[0] ?? { karma: 0 };
+
+      result.quotes = total;
+      result.karma = karma;
+    } catch (error) {
+      this.logger.error(error.message, 'getQuoteKarma');
+
+      throw new InternalServerErrorException('Failed to fetch quote karma.');
+    }
+
+    return result;
+  }
+
+  async createQuote(user: User, createQuoteDTO: CreateUpdateQuoteDTO) {
+    const { content } = createQuoteDTO;
+
+    const quote: Quote = this.quoteRepo.create({
+      user,
+      content,
+    });
+
+    try {
+      await this.quoteRepo.insert(quote);
+    } catch (error) {
+      this.logger.error(error.message, 'createQuote');
+
+      throw new InternalServerErrorException('Failed to create quote.');
+    }
+  }
+
+  async updateQuote(
+    user: User,
+    id: string,
+    createQuoteDTO: CreateUpdateQuoteDTO,
+  ) {
+    const { content } = createQuoteDTO;
+
+    try {
+      const { affected } = await this.quoteRepo.update({ id }, { content });
+
+      return affected;
+    } catch (error) {
+      this.logger.error(error.message, 'updateQuote');
+
+      throw new InternalServerErrorException('Failed to update quote.');
+    }
+  }
+
+  async unQuote(user: User, id: string) {
+    let votedOnQuote: boolean;
+
+    try {
+      votedOnQuote = await this.voteRepo.exists({ where: { quote: { id } } });
+    } catch (error) {
+      this.logger.error(error.message, 'unQuote');
+
+      throw new InternalServerErrorException('Failed to fetch votes on quote.');
+    }
+
+    if (votedOnQuote) {
+      try {
+        await this.voteRepo.delete({ quote: { id } });
+      } catch (error) {
+        this.logger.error(error.message, 'unQuote');
+
+        throw new InternalServerErrorException(
+          'Failed to delete votes on quote.',
+        );
+      }
+    }
+
+    try {
+      const { affected } = await this.quoteRepo.delete({ id });
+
+      return affected;
+    } catch (error) {
+      this.logger.error(error.message, 'unQuote');
+
+      throw new InternalServerErrorException('Failed to delete quote.');
+    }
+  }
+}

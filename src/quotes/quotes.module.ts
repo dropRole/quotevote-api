@@ -4,9 +4,10 @@ import { QuotesService } from './quotes.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import Quote from './entities/quote.entity';
 import Vote from './entities/vote.entity';
+import { LoggerModule } from 'src/logger/logger.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Quote, Vote])],
+  imports: [TypeOrmModule.forFeature([Quote, Vote]), LoggerModule],
   controllers: [QuotesController],
   providers: [QuotesService],
 })
