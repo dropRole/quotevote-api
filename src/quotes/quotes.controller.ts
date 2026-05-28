@@ -29,11 +29,15 @@ export class QuotesController {
 
   @Public()
   @Get('/:id')
-  getQuote(@Param('id') getQuoteDTO: GetQuoteDTO, @GetUser() user?: User) {}
+  getQuote(@Param('id') getQuoteDTO: GetQuoteDTO, @GetUser() user?: User) {
+    return this.quotesService.getQuote(getQuoteDTO, user);
+  }
 
   @Public()
   @Get('/rand/one')
-  getRandomQuote(@GetUser() user?: User) {}
+  getRandomQuote(@GetUser() user?: User) {
+    return this.quotesService.getRandomQuote(user);
+  }
 
   @Public()
   @Get('/karma/:username')
@@ -51,14 +55,18 @@ export class QuotesController {
     @GetUser() user: User,
     @Param('id') id: string,
     @Body() createQuoteDTO: CreateQuoteDTO,
-  ) {}
+  ) {
+    return this.quotesService.updateQuote(user, id, createQuoteDTO);
+  }
 
   @Patch('/:id/vote')
   voteOnQuote(
     @GetUser() user: User,
     @Param('id') id: string,
     @Body() voteOnQuote: VoteOnQuoteDTO,
-  ) {}
+  ) {
+    return this.quotesService.voteOnQuote(user, id, voteOnQuote);
+  }
 
   @Delete('/me/:id')
   unQuote(@GetUser() user: User, @Param('id') id: string) {

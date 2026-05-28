@@ -11,6 +11,8 @@ import FilterQuotesDTO from './dto/filter-quotes.dto';
 import User from 'src/auth/entities/user.entity';
 import FileLogger from 'src/logger/file-logger.service';
 import CreateUpdateQuoteDTO from './dto/create-quote.dto';
+import GetQuoteDTO from './dto/get-quote.dto';
+import VoteOnQuoteDTO from './dto/vote-on-quote.dto';
 
 @Injectable()
 export class QuotesService {
@@ -80,7 +82,9 @@ export class QuotesService {
     return quotes;
   }
 
-  async getQuote(id: string, user?: User) {
+  async getQuote(getQuoteDTO: GetQuoteDTO, user?: User) {
+    const { id } = getQuoteDTO;
+
     const query = this.quoteRepo.createQueryBuilder('quote');
     query.innerJoin('quote.user', 'user');
     query.leftJoinAndSelect('quote.votes', 'vote');
@@ -110,6 +114,38 @@ export class QuotesService {
       throw new InternalServerErrorException('Failed to fetch quote.');
     }
 
+    return quote;
+  }
+
+  async getRandomQuote(user?: User) {
+    const query = this.quoteRepo.createQueryBuilder('quote');
+    query.innerJoin('quote.user', 'user');
+    query.leftJoinAndSelect('quote.votes', 'vote');
+    query.select('quote.id', 'id');
+    query.addSelect('quote.content', 'content');
+    query.addSelect('quote.written', 'written');
+    query.addSelect('quote.updated', 'updated');
+    query.addSelect('user.name', 'name');
+    query.addSelect('user.surname', 'surname');
+    query.addSelect('user.avatar', 'avatar');
+    query.addSelect(
+      '(COUNT(CASE WHEN vote.up = true THEN 1 END) - COUNT(CASE WHEN vote.up = false THEN 1 END))',
+      'totalVotes',
+    );
+
+    query.orderBy('random()');
+
+    query.groupBy('quote.id, user.avatar, user.name, user.surname');
+
+    let quote: Record<string, string | number>;
+
+    try {
+      quote = (await query.execute())[0];
+    } catch (error) {
+      this.logger.error(error.message, 'getQuote');
+
+      throw new InternalServerErrorException('Failed to fetch random quote.');
+    }
     return quote;
   }
 
@@ -180,6 +216,67 @@ export class QuotesService {
       this.logger.error(error.message, 'updateQuote');
 
       throw new InternalServerErrorException('Failed to update quote.');
+    }
+  }
+
+  async voteOnQuote(user: User, id: string, voteOnQuote: VoteOnQuoteDTO) {
+    let alreadyVotedOn: boolean;
+
+    try {
+      alreadyVotedOn = await this.voteRepo.exists({ where: { quote: { id } } });
+    } catch (error) {
+      this.logger.error(error.message, 'voteOnQuote');
+
+      throw new InternalServerErrorException(
+        'Failed to check if up or down voted on quote.',
+      );
+    }
+
+    const { vote } = voteOnQuote;
+
+    if (alreadyVotedOn) {
+      try {
+        await this.voteRepo.update(
+          { user, quote: { id } },
+          { up: vote === 'up' ? true : false },
+        );
+      } catch (error) {
+        this.logger.error(error.message, 'voteOnQuote');
+
+        throw new InternalServerErrorException(
+          'Failed to update vote on quote.',
+        );
+      }
+
+      return;
+    }
+
+    let quote: Quote | null;
+
+    try {
+      quote = await this.quoteRepo.findOneBy({ id });
+    } catch (error) {
+      this.logger.error(error.message, 'voteOnQuote');
+
+      throw new InternalServerErrorException(
+        'Failed to fetch the voted on quote.',
+      );
+    }
+
+    if (!quote) throw new NotFoundException('The voted on quote not found.');
+
+    const quoteVote = this.voteRepo.create({
+      up: vote === 'up' ? true : false,
+      quote,
+      user,
+    });
+
+    try {
+      await this.voteRepo.insert(quoteVote);
+    } catch (error) {
+      this.logger.error(error.message, 'voteOnQuote');
+
+      throw new InternalServerErrorException('Failed to insert vote on quote.');
     }
   }
 
