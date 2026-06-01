@@ -19,7 +19,7 @@ import * as moment from 'moment';
 import BasicsUpdateDTO from './dto/basics-update.dto';
 import PassUpdateDTO from './dto/pass-update.dto';
 import * as fs from 'fs';
-import FileLogger from 'src/logger/file-logger.service';
+import FileLogger from '../logger/file-logger.service';
 
 @Injectable()
 export class AuthService {
