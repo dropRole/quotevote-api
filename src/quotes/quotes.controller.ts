@@ -8,10 +8,10 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { Public } from 'src/auth/decorators/public.decorator';
+import { Public } from '../auth/decorators/public.decorator';
 import FilterQuotesDTO from './dto/filter-quotes.dto';
-import GetUser from 'src/common/decorators/get-user.decorator';
-import User from 'src/auth/entities/user.entity';
+import GetUser from '../common/decorators/get-user.decorator';
+import User from '../auth/entities/user.entity';
 import CreateQuoteDTO from './dto/create-quote.dto';
 import GetQuoteDTO from './dto/get-quote.dto';
 import VoteOnQuoteDTO from './dto/vote-on-quote.dto';
