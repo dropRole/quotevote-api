@@ -27,7 +27,7 @@ export class QuotesController {
 
   @Public()
   @Get('/:id')
-  getQuote(@Param('id') getQuoteDTO: GetQuoteDTO, @GetUser() user?: User) {}
+  getQuote(@Param() getQuoteDTO: GetQuoteDTO, @GetUser() user?: User) {}
 
   @Public()
   @Get('/rand/one')
@@ -51,7 +51,7 @@ export class QuotesController {
   voteOnQuote(
     @GetUser() user: User,
     @Param('id') id: string,
-    @Body() voteOnQuote: VoteOnQuoteDTO,
+    @Body() voteOnQuoteDTO: VoteOnQuoteDTO,
   ) {}
 
   @Delete('/me/:id')
