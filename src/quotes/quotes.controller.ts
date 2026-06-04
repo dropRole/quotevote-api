@@ -29,7 +29,7 @@ export class QuotesController {
 
   @Public()
   @Get('/:id')
-  getQuote(@Param('id') getQuoteDTO: GetQuoteDTO, @GetUser() user?: User) {
+  getQuote(@Param() getQuoteDTO: GetQuoteDTO, @GetUser() user?: User) {
     return this.quotesService.getQuote(getQuoteDTO, user);
   }
 
@@ -63,9 +63,9 @@ export class QuotesController {
   voteOnQuote(
     @GetUser() user: User,
     @Param('id') id: string,
-    @Body() voteOnQuote: VoteOnQuoteDTO,
+    @Body() voteOnQuoteDTO: VoteOnQuoteDTO,
   ) {
-    return this.quotesService.voteOnQuote(user, id, voteOnQuote);
+    return this.quotesService.voteOnQuote(user, id, voteOnQuoteDTO);
   }
 
   @Delete('/me/:id')
