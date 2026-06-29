@@ -69,10 +69,13 @@ export class QuotesService {
       '(COUNT(CASE WHEN vote.up = true THEN 1 END) - COUNT(CASE WHEN vote.up = false THEN 1 END))',
       'totalVotes',
     );
+    query.addSelect('user.username', 'username');
 
-    if (author) query.where('quote.username = :author', { author });
+    if (author) query.where('user.username = :author', { author });
 
-    query.groupBy('quote.id, user.avatar, user.name, user.surname');
+    query.groupBy(
+      'quote.id, user.avatar, user.name, user.surname, user.username',
+    );
 
     switch (searchFor) {
       case 'mostLiked':
@@ -164,10 +167,13 @@ export class QuotesService {
       '(COUNT(CASE WHEN vote.up = true THEN 1 END) - COUNT(CASE WHEN vote.up = false THEN 1 END))',
       'totalVotes',
     );
+    query.addSelect('user.username', 'username');
 
     query.orderBy('random()');
 
-    query.groupBy('quote.id, user.avatar, user.name, user.surname');
+    query.groupBy(
+      'quote.id, user.avatar, user.name, user.surname, user.username',
+    );
 
     let quote: Record<string, string | number>;
 
@@ -178,6 +184,10 @@ export class QuotesService {
 
       throw new InternalServerErrorException('Failed to fetch random quote.');
     }
+
+    if (user)
+      return (await this.checkForVotedQuotes([quote], user.username))[0];
+
     return quote;
   }
 
