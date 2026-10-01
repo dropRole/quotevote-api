@@ -10,6 +10,7 @@ import { JWTStrategy } from './strategies/jwt.strategy';
 import { ConfigModule } from '@nestjs/config';
 import { UsersController } from './users.controller';
 import { LoggerModule } from 'src/logger/logger.module';
+import { UsersService } from './users.service';
 
 @Module({
   imports: [
@@ -20,6 +21,6 @@ import { LoggerModule } from 'src/logger/logger.module';
     LoggerModule,
   ],
   controllers: [AuthController, UsersController],
-  providers: [AuthService, JWTStrategy],
+  providers: [AuthService, JWTStrategy, UsersService],
 })
 export class AuthModule {}

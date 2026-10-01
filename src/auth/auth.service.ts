@@ -16,9 +16,6 @@ import { JWTPayload } from './strategies/jwt.strategy';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
 import * as moment from 'moment';
-import BasicsUpdateDTO from './dto/basics-update.dto';
-import PassUpdateDTO from './dto/pass-update.dto';
-import * as fs from 'fs';
 import FileLogger from 'src/logger/file-logger.service';
 
 @Injectable()
@@ -111,102 +108,5 @@ export class AuthService {
     }
 
     throw new UnauthorizedException('Check your credentials.');
-  }
-
-  async updateBasics(
-    response: Response,
-    user: User,
-    basicsUpdateDTO: BasicsUpdateDTO,
-  ) {
-    const { email, name, surname, username } = basicsUpdateDTO;
-
-    user.email = email;
-    user.name = name;
-    user.surname = surname;
-
-    try {
-      await this.userRepo.update(
-        { username: user.username },
-        { ...user, username },
-      );
-    } catch (error) {
-      if (
-        error instanceof QueryFailedError &&
-        error.driverError?.code === SQLErrorCode.UniqueViolation
-      )
-        throw new ConflictException(`Username ${username} already exists.`);
-
-      this.fileLogger.error(error.message, 'updateBasics');
-
-      throw new InternalServerErrorException('Failed to update basics.');
-    }
-
-    let accessToken = '';
-
-    const payload: JWTPayload = { username };
-
-    accessToken = this.jwtService.sign(payload);
-
-    const expires = moment().add(86400, 'seconds').toDate();
-
-    response.cookie('quotevote-jwt', accessToken, {
-      httpOnly: true,
-      secure: process.env.STAGE === 'prod',
-      expires,
-    });
-  }
-
-  async updatePass(user: User, passUpdateDTO: PassUpdateDTO) {
-    const { currentPass, newPass } = passUpdateDTO;
-
-    const isValidPass = await bcrypt.compare(currentPass, user.pass);
-
-    if (user && isValidPass) {
-      const salt = await bcrypt.genSalt();
-
-      user.pass = await bcrypt.hash(newPass, salt);
-
-      try {
-        await this.userRepo.update({ username: user.username }, user);
-      } catch (error) {
-        this.fileLogger.error(error.message, 'updatePass');
-
-        throw new InternalServerErrorException('Failed to update pass.');
-      }
-
-      return;
-    }
-
-    throw new ConflictException('Incorrect password.');
-  }
-
-  async uploadAvatar(user: User, filename: string) {
-    if (user.avatar) fs.unlinkSync(user.avatar);
-
-    user.avatar = `uploads/${filename}`;
-
-    try {
-      await this.userRepo.update({ username: user.username }, user);
-    } catch (error) {
-      this.fileLogger.error(error.message, 'uploadAvatar');
-
-      throw new InternalServerErrorException('Failed to upload avatar.');
-    }
-
-    return { path: user.avatar };
-  }
-
-  async unlinkAvatar(user: User): Promise<void> {
-    if (user.avatar) fs.unlinkSync(user.avatar);
-
-    user.avatar = null;
-
-    try {
-      await this.userRepo.update({ username: user.username }, user);
-    } catch (error) {
-      this.fileLogger.error(error.message, 'unlinkAvatar');
-
-      throw new InternalServerErrorException('Failed to unlink avatar.');
-    }
   }
 }
