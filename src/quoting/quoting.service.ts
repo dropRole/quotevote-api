@@ -15,7 +15,7 @@ import GetQuoteDTO from './dto/get-quote.dto';
 import VoteOnQuoteDTO from './dto/vote-on-quote.dto';
 
 @Injectable()
-export class QuotesService {
+export class QuotingService {
   constructor(
     @InjectRepository(Quote) private quoteRepo: Repository<Quote>,
     @InjectRepository(Vote) private voteRepo: Repository<Vote>,

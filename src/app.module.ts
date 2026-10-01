@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
-import { QuotesModule } from './quotes/quotes.module';
+import { QuotingModule } from './quoting/quoting.module';
 import { ConfigModule } from '@nestjs/config';
 import ENV_CONFIG from './config/env/env.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -11,7 +11,7 @@ import { JWTGuard } from './auth/guards/jwt.guard';
 @Module({
   imports: [
     AuthModule,
-    QuotesModule,
+    QuotingModule,
     ConfigModule.forRoot(ENV_CONFIG),
     TypeOrmModule.forRootAsync(TYPEORM_CONFIG),
   ],
