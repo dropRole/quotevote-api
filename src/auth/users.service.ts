@@ -209,7 +209,7 @@ export class UsersService {
         if (error) {
           this.fileLogger.error(error.message, 'uploadAvatar');
 
-          throw new InternalServerErrorException('Failed to upload avatar.');
+          throw new InternalServerErrorException('Failed to unlink avatar.');
         }
       });
 
