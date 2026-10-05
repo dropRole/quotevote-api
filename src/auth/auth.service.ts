@@ -16,7 +16,7 @@ import { JWTPayload } from './strategies/jwt.strategy';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
 import * as moment from 'moment';
-import FileLogger from 'src/logger/file-logger.service';
+import FileLogger from '../logger/file-logger.service';
 
 @Injectable()
 export class AuthService {

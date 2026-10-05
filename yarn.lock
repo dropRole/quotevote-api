@@ -651,6 +651,13 @@
   resolved "https://registry.yarnpkg.com/@istanbuljs/schema/-/schema-0.1.6.tgz#8dc9afa2ac1506cb1a58f89940f1c124446c8df3"
   integrity sha512-+Sg6GCR/wy1oSmQDFq4LQDAhm3ETKnorxN+y5nbLULOR3P0c14f2Wurzj3/xqPXtasLFfHd5iRFQ7AJt4KH2cw==
 
+"@jest-mock/express@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@jest-mock/express/-/express-3.0.0.tgz#e8b65f66963c7433b50405d22cb3fb11e54055a9"
+  integrity sha512-omOl6bh4EOUbp9bvcPSBZKaG8nAtBlhVSUhLx0brHrNpEDn+fMtQp58NkhdY3OoUfXjb7go/EcSYwk+H1BVLdg==
+  dependencies:
+    "@types/express" "^5.0.0"
+
 "@jest/console@^29.7.0":
   version "29.7.0"
   resolved "https://registry.yarnpkg.com/@jest/console/-/console-29.7.0.tgz#cd4822dbdb84529265c5a2bdb529a3c9cc950ffc"
