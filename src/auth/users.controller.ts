@@ -13,7 +13,7 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import GetUser from 'src/common/decorators/get-user.decorator';
+import GetUser from '../common/decorators/get-user.decorator';
 import User from './entities/user.entity';
 import { Public } from './decorators/public.decorator';
 import GetAvatarDTO from './dto/get-avatar.dto';
