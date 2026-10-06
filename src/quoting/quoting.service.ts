@@ -9,7 +9,7 @@ import { Repository } from 'typeorm';
 import Vote from './entities/vote.entity';
 import FilterQuotesDTO from './dto/filter-quotes.dto';
 import User from 'src/auth/entities/user.entity';
-import FileLogger from 'src/logger/file-logger.service';
+import FileLogger from '../logger/file-logger.service';
 import CreateUpdateQuoteDTO from './dto/create-quote.dto';
 import GetQuoteDTO from './dto/get-quote.dto';
 import VoteOnQuoteDTO from './dto/vote-on-quote.dto';
