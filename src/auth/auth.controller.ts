@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Param, Post, Res } from '@nestjs/common';
 import { Public } from './decorators/public.decorator';
 import SignupDTO from './dto/signup.dto';
 import AuthCredentialsDTO from './dto/auth-credentials.dto';
@@ -19,4 +19,7 @@ export class AuthController {
 
   @Post('/logout')
   logout(@Res({ passthrough: true }) response: Response) {}
+
+  @Delete('/:username')
+  removeUser(@Param('username') username: string) {}
 }
