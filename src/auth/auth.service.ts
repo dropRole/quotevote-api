@@ -109,4 +109,14 @@ export class AuthService {
 
     throw new UnauthorizedException('Check your credentials.');
   }
+
+  async removeUser(username: string) {
+    try {
+      await this.userRepo.delete({ username });
+    } catch (error) {
+      this.fileLogger.error(error.message, 'removeUser');
+
+      throw new InternalServerErrorException('Failed to remove user.');
+    }
+  }
 }

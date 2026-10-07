@@ -30,5 +30,7 @@ export class AuthController {
   }
 
   @Delete('/:username')
-  removeUser(@Param('username') username: string) {}
+  removeUser(@Param('username') username: string) {
+    return this.authService.removeUser(username);
+  }
 }
