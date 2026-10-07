@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Param, Post, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Public } from './decorators/public.decorator';
 import SignupDTO from './dto/signup.dto';
@@ -28,4 +28,7 @@ export class AuthController {
   logout(@Res({ passthrough: true }) response: Response) {
     response.clearCookie('quotevote-jwt');
   }
+
+  @Delete('/:username')
+  removeUser(@Param('username') username: string) {}
 }
