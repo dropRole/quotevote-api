@@ -5,11 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import User from './entities/user.entity';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import JWT_CONFIG from 'src/config/auth/jwt.config';
+import JWT_CONFIG from '../config/auth/jwt.config';
 import { JWTStrategy } from './strategies/jwt.strategy';
 import { ConfigModule } from '@nestjs/config';
 import { UsersController } from './users.controller';
-import { LoggerModule } from 'src/logger/logger.module';
+import { LoggerModule } from '../logger/logger.module';
 import { UsersService } from './users.service';
 
 @Module({
