@@ -5,10 +5,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import User from './entities/user.entity';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import JWT_CONFIG from 'src/config/auth/jwt.config';
+import JWT_CONFIG from '../config/auth/jwt.config';
 import { JWTStrategy } from './strategies/jwt.strategy';
 import { ConfigModule } from '@nestjs/config';
-import { LoggerModule } from 'src/logger/logger.module';
+import { UsersController } from './users.controller';
+import { LoggerModule } from '../logger/logger.module';
+import { UsersService } from './users.service';
 
 @Module({
   imports: [
@@ -18,7 +20,7 @@ import { LoggerModule } from 'src/logger/logger.module';
     JwtModule.registerAsync(JWT_CONFIG),
     LoggerModule,
   ],
-  controllers: [AuthController],
-  providers: [AuthService, JWTStrategy],
+  controllers: [AuthController, UsersController],
+  providers: [AuthService, JWTStrategy, UsersService],
 })
 export class AuthModule {}

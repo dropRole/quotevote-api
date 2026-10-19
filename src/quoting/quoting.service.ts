@@ -15,7 +15,7 @@ import GetQuoteDTO from './dto/get-quote.dto';
 import VoteOnQuoteDTO from './dto/vote-on-quote.dto';
 
 @Injectable()
-export class QuotesService {
+export class QuotingService {
   constructor(
     @InjectRepository(Quote) private quoteRepo: Repository<Quote>,
     @InjectRepository(Vote) private voteRepo: Repository<Vote>,
@@ -235,7 +235,9 @@ export class QuotesService {
     });
 
     try {
-      await this.quoteRepo.insert(quote);
+      const { identifiers } = await this.quoteRepo.insert(quote);
+
+      return identifiers;
     } catch (error) {
       this.logger.error(error.message, 'createQuote');
 
@@ -265,7 +267,9 @@ export class QuotesService {
     let alreadyVotedOn: boolean;
 
     try {
-      alreadyVotedOn = await this.voteRepo.exists({ where: { quote: { id } } });
+      alreadyVotedOn = await this.voteRepo.exists({
+        where: { quote: { id }, user: { username: user.username } },
+      });
     } catch (error) {
       this.logger.error(error.message, 'voteOnQuote');
 
@@ -320,6 +324,8 @@ export class QuotesService {
 
       throw new InternalServerErrorException('Failed to insert vote on quote.');
     }
+
+    return { id: quoteVote.id };
   }
 
   async unQuote(user: User, id: string) {

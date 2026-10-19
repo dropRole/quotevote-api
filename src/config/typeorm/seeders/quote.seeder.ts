@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 import { Seeder } from 'typeorm-extension';
-import Quote from '../../../quotes/entities/quote.entity';
+import Quote from '../../../quoting/entities/quote.entity';
 import User from '../../../auth/entities/user.entity';
 
 export default class QuoteSeeder implements Seeder {

@@ -15,39 +15,39 @@ import User from '../auth/entities/user.entity';
 import CreateQuoteDTO from './dto/create-quote.dto';
 import GetQuoteDTO from './dto/get-quote.dto';
 import VoteOnQuoteDTO from './dto/vote-on-quote.dto';
-import { QuotesService } from './quotes.service';
+import { QuotingService } from './quoting.service';
 
-@Controller('quotes')
-export class QuotesController {
-  constructor(private quotesService: QuotesService) {}
+@Controller('quoting')
+export class QuotingController {
+  constructor(private quotingService: QuotingService) {}
 
   @Public()
   @Get()
   getQuotes(@Query() filterQuotesDTO: FilterQuotesDTO, @GetUser() user?: User) {
-    return this.quotesService.getQuotes(filterQuotesDTO, user);
+    return this.quotingService.getQuotes(filterQuotesDTO, user);
   }
 
   @Public()
   @Get('/:id')
   getQuote(@Param() getQuoteDTO: GetQuoteDTO, @GetUser() user?: User) {
-    return this.quotesService.getQuote(getQuoteDTO, user);
+    return this.quotingService.getQuote(getQuoteDTO, user);
   }
 
   @Public()
   @Get('/rand/one')
   getRandomQuote(@GetUser() user?: User) {
-    return this.quotesService.getRandomQuote(user);
+    return this.quotingService.getRandomQuote(user);
   }
 
   @Public()
   @Get('/karma/:username')
   getQuoteKarma(@Param('username') username: string) {
-    return this.quotesService.getQuoteKarma(username);
+    return this.quotingService.getQuoteKarma(username);
   }
 
   @Post('/me/myquote')
   createQuote(@GetUser() user: User, @Body() createQuoteDTO: CreateQuoteDTO) {
-    return this.quotesService.createQuote(user, createQuoteDTO);
+    return this.quotingService.createQuote(user, createQuoteDTO);
   }
 
   @Patch('/me/myquote/:id')
@@ -56,7 +56,7 @@ export class QuotesController {
     @Param('id') id: string,
     @Body() createQuoteDTO: CreateQuoteDTO,
   ) {
-    return this.quotesService.updateQuote(user, id, createQuoteDTO);
+    return this.quotingService.updateQuote(user, id, createQuoteDTO);
   }
 
   @Patch('/:id/vote')
@@ -65,11 +65,11 @@ export class QuotesController {
     @Param('id') id: string,
     @Body() voteOnQuoteDTO: VoteOnQuoteDTO,
   ) {
-    return this.quotesService.voteOnQuote(user, id, voteOnQuoteDTO);
+    return this.quotingService.voteOnQuote(user, id, voteOnQuoteDTO);
   }
 
   @Delete('/me/:id')
   unQuote(@GetUser() user: User, @Param('id') id: string) {
-    return this.quotesService.unQuote(user, id);
+    return this.quotingService.unQuote(user, id);
   }
 }

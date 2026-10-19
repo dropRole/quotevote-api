@@ -4,8 +4,8 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 import UserSeeder from './seeders/user.seeder';
 import QuoteSeeder from './seeders/quote.seeder';
 import User from '../../auth/entities/user.entity';
-import Quote from '../../quotes/entities/quote.entity';
-import Vote from '../../quotes/entities/vote.entity';
+import Quote from '../../quoting/entities/quote.entity';
+import Vote from '../../quoting/entities/vote.entity';
 
 dotenv.config({ path: `src/config/env/.env.stage.${process.env.STAGE}` });
 
