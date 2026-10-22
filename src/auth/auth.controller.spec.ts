@@ -60,6 +60,12 @@ describe('AuthController', () => {
         ConflictException,
       );
     });
+
+    it('should return an object of User type when Created', async () => {
+      service.signup.mockResolvedValue();
+
+      await expect(controller.signup(signupDTO)).resolves.toBeUndefined();
+    });
   });
 
   describe('login', () => {
