@@ -87,7 +87,7 @@ describe('Auth', () => {
     });
   });
 
-  describe('/login (POST)', () => {
+  describe('/auth/login (POST)', () => {
     it('Issues an auth cookie', async () => {
       response = await request(app.getHttpServer())
         .post('/auth/login')
@@ -114,7 +114,7 @@ describe('Auth', () => {
     });
   });
 
-  describe('/logout (POST)', () => {
+  describe('/auth/logout (POST)', () => {
     it('Expires an auth cookie', async () => {
       await request(app.getHttpServer())
         .post('/auth/logout')
